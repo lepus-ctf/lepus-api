@@ -27,6 +27,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Define custome user model
+AUTH_USER_MODEL = 'lapus.User'
+
 
 # Application definition
 
