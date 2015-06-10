@@ -36,8 +36,6 @@ class FileSerializer(serializers.ModelSerializer):
         extra_kwargs = {'is_public' : {'write_only' : True}}
 
 class TeamSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
-    
     class Meta:
         model = models.Team
         fields = ('id', 'name', 'password', 'token', 'last_score_time', 'created_at', 'updated_at')
