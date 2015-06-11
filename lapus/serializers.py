@@ -43,9 +43,11 @@ class TeamSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password' : {'write_only' : True}}
     
     def create(self, validated_data):
-        if models.Team.objects.filter(name=validated_data['name']):
-            team = models.Team(name = validated_data['name'])
-            team.set_password(validated_data['password'])
-            team.save()
-            return team
-        return Response(serializers.error, status=status.HTTP)
+        # Teamが既にある場合登録せずエラーを出力する
+        if not models.Team.objects.filter(name=validated_data['name']):
+            return Response(serializers.error, status=status.HTTP)
+        
+        team = models.Team(name = validated_data['name'])
+        team.set_password(validated_data['password'])
+        team.save()
+        return team
