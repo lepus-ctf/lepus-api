@@ -38,7 +38,7 @@ class FileSerializer(serializers.ModelSerializer):
 class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Team
-        fields = ('id', 'name', 'display_name', 'password', 'token', 'last_score_time', 'created_at', 'updated_at')
+        fields = ('id', 'name', 'display_name',  'token', 'last_score_time', 'created_at', 'updated_at')
         read_only_fields = ('created_at', 'updated_at', 'token', 'id')
         extra_kwargs = {'password' : {'write_only' : True}}
     
@@ -50,5 +50,4 @@ class TeamSerializer(serializers.ModelSerializer):
         team.set_password(validated_data['password'])
         return team
 
-    def update(self, validated_data):
-        if not validated_data['password']:
+
