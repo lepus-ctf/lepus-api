@@ -48,8 +48,7 @@ class TeamSerializer(serializers.ModelSerializer):
                 display_name = validated_data['display_name']
                 )
         team.set_password(validated_data['password'])
-        team.save()
         return team
 
     def update(self, validated_data):
-        
+        if not validated_data['password']:
