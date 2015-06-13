@@ -38,16 +38,18 @@ class FileSerializer(serializers.ModelSerializer):
 class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Team
-        fields = ('id', 'name', 'password', 'token', 'last_score_time', 'created_at', 'updated_at')
-        read_only_fields = ('created_at', 'updated_at')
+        fields = ('id', 'name', 'display_name', 'password', 'token', 'last_score_time', 'created_at', 'updated_at')
+        read_only_fields = ('created_at', 'updated_at', 'token', 'id')
         extra_kwargs = {'password' : {'write_only' : True}}
     
     def create(self, validated_data):
-        # Teamが既にある場合登録せずエラーを出力する
-        if not models.Team.objects.filter(name=validated_data['name']):
-            return Response(serializers.error, status=status.HTTP)
-        
-        team = models.Team(name = validated_data['name'])
+        team = models.Team(
+                name = validated_data['name'],
+                display_name = validated_data['display_name']
+                )
         team.set_password(validated_data['password'])
         team.save()
         return team
+
+    def update(self, validated_data):
+        
