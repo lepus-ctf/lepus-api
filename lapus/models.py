@@ -97,6 +97,7 @@ class User(AbstractUser, Templete):
     team = models.ForeignKey(Team, verbose_name="チーム", blank=True, null=True)
     seat = models.CharField("座席", max_length=32, blank=True)
     last_score_time = models.DateTimeField("最終得点日時", blank=True, null=True)
+    display_name = models.CharField("表示名", max_length=30, unique=True)
 
     def __str__(self):
         return self.username

@@ -2,8 +2,7 @@
 
 from lapus import models
 
-from rest_framework import serializers, status
-from rest_framework.response import Response
+from rest_framework import serializers
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -17,6 +16,7 @@ class QuestionSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'created_at', 'updated_at')
 
 class AdminFlagSerializer(serializers.ModelSerializer):
+    #UserModelのis_staffがTrueの場合にのみ使えるようにする
     class Meta:
         model = models.Flag
         fields = ('id', 'flag', 'question', 'point', 'created_at', 'updated_at')
@@ -33,3 +33,8 @@ class TeamSerializer(serializers.ModelSerializer):
         model = models.Team
         fields = ('id', 'name', 'display_name',  'token', 'last_score_time', 'created_at', 'updated_at')
         read_only_fields = ('created_at', 'updated_at', 'token', 'id')
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.User
+        fields = ('id', )
