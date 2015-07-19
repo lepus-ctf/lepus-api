@@ -10,12 +10,14 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.hashers import make_password
 
 class Templete(models.Model):
+    """全てのモデルで共通のフィールドを含んだAbstract Model"""
     class Meta:
         abstract = True
     created_at = models.DateTimeField("作成日時", auto_now_add=True)
     updated_at = models.DateTimeField("最終更新日時", auto_now=True)
 
 class Category(Templete):
+    """問題のカテゴリ"""
     class Meta:
         ordering = ['ordering']
         unique_together = (('name', 'ordering'),)
@@ -26,6 +28,7 @@ class Category(Templete):
         return self.name
 
 class Question(Templete):
+    """問題"""
     class Meta:
         ordering = ['ordering']
     category = models.ForeignKey(Category, verbose_name="カテゴリ")
@@ -40,6 +43,7 @@ class Question(Templete):
         return self.title
 
 class Flag(Templete):
+    """正解のフラグと得点"""
     flag = models.CharField("Flag", max_length=200, unique=True)
     question = models.ForeignKey(Question, verbose_name="問題")
     point = models.IntegerField("得点")
@@ -48,6 +52,7 @@ class Flag(Templete):
         return self.flag
 
 class File(Templete):
+    """問題に添付するファイル"""
     question = models.ForeignKey(Question, verbose_name="問題")
     name = models.CharField("ファイル名", max_length=256)
     file = models.FileField(upload_to='question/', max_length=256, verbose_name="ファイル")
@@ -61,6 +66,7 @@ class File(Templete):
         return self.name
 
 class Team(Templete):
+    """チーム"""
     name = models.CharField("チーム名", max_length=32, unique=True)
     display_name = models.CharField("表示名", max_length=32, unique=True)
     password = models.CharField("チームパスワード", max_length=128)
@@ -94,6 +100,7 @@ class Team(Templete):
 
 
 class User(AbstractUser, Templete):
+    """チームに属するユーザ"""
     team = models.ForeignKey(Team, verbose_name="チーム", blank=True, null=True)
     seat = models.CharField("座席", max_length=32, blank=True)
     last_score_time = models.DateTimeField("最終得点日時", blank=True, null=True)
@@ -112,6 +119,7 @@ class User(AbstractUser, Templete):
         return points
 
 class UserConnection(Templete):
+    """ユーザの接続元を管理するモデル"""
     class Meta:
         unique_together = (('user', 'ip'),)
         ordering = ("-updated_at",)
@@ -129,6 +137,7 @@ class UserConnection(Templete):
         return user_connection
 
 class Answer(Templete):
+    """回答履歴"""
     class Meta:
         unique_together = (('team', 'flag'),)
     user = models.ForeignKey(User, verbose_name="ユーザー")
@@ -142,6 +151,7 @@ class Answer(Templete):
         return self.flag is not None
 
 class AttackPoint(Templete):
+    """攻撃点記録"""
     user = models.ForeignKey(User, verbose_name="ユーザー")
     team = models.ForeignKey(Team, verbose_name="チーム")
     question = models.ForeignKey(Question, verbose_name="問題")
@@ -149,6 +159,7 @@ class AttackPoint(Templete):
     point = models.IntegerField("得点")
 
 class Config(Templete):
+    """設定用モデル"""
     key = models.CharField("設定項目", max_length=256, unique=True)
     value_str = models.TextField("シリアライズされた値")
 
@@ -162,6 +173,7 @@ class Config(Templete):
     value = property(get_value, set_value)
 
 class Notice(Templete):
+    """お知らせ"""
     class Meta:
         ordering = ['created_at']
     title = models.CharField("タイトル", max_length=80)
@@ -169,5 +181,3 @@ class Notice(Templete):
 
     def __str__(self):
         return self.title
-
-
