@@ -58,4 +58,3 @@ class NoticeSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Notice
         fields = ('id', 'title', 'body')
-
