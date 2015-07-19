@@ -37,4 +37,13 @@ class TeamSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.User
-        fields = ('id', )
+        fields = ('id', 'username', 'is_staff', 'is_active', 'last_login', 'last_score_time', 'team', 'seat', 'display_name', 'points')
+        read_only_fields = ('id', 'username', 'last_login', 'last_score_time', 'points')
+        extra_kwargs = {'password'}
+
+class AnswerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Answer
+        fields = ('id', 'user', 'team', 'question', 'answer', 'is_correct')
+        read_only_fields = ('id', 'user', 'team', 'is_correct')
+
