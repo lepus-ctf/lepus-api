@@ -7,13 +7,14 @@ from rest_framework import serializers
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Category
-        fields = ('id', 'name', 'ordering', 'created_at', 'updated_at')
+        fields = ('id', 'name', 'ordering', 'updated_at')
+        read_only_fields = ('id', 'name', 'ordering', 'updated_at')
 
 class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Question
         fields = ('id', 'category', 'ordering', 'title', 'sentence', 'max_answers', 'max_failure', 'created_at', 'updated_at')
-        read_only_fields = ('id', 'created_at', 'updated_at')
+        read_only_fields = ('id', 'category', 'ordering', 'title', 'sentence', 'max_answers', 'max_failure', 'created_at', 'updated_at')
 
 class AdminFlagSerializer(serializers.ModelSerializer):
     #UserModelのis_staffがTrueの場合にのみ使えるようにする
