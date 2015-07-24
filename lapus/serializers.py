@@ -24,8 +24,8 @@ class QuestionSerializer(serializers.ModelSerializer):
 class FileSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.File
-        fields = ('id', 'url', 'created_at', 'updated_at')
-        read_only_fields = ('id', 'url', 'created_at', 'updated_at')
+        fields = ('id', 'url', 'name', 'question', 'created_at', 'updated_at')
+        read_only_fields = ('id', 'url', 'name', 'question', 'created_at', 'updated_at')
 
 
 class TeamSerializer(serializers.ModelSerializer):
@@ -71,6 +71,6 @@ class AttackPointeSerialier(serializers.ModelSerializer):
 class NoticeSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Notice
-        fields = ('id', 'title', 'body')
-        read_only_fields = ('id', 'title', 'body')
+        fields = ('id', 'title', 'body', 'created_at', 'updated_at')
+        read_only_fields = ('id', 'title', 'body', 'created_at', 'updated_at')
 
