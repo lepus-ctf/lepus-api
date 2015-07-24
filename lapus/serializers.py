@@ -61,7 +61,7 @@ class AnswerSerializer(serializers.ModelSerializer):
         extra_kwargs = {'answer': {'write_only': True}}
 
 
-class AttackPointeSerialier(serializers.ModelSerializer):
+class AttackPointSerialier(serializers.ModelSerializer):
     class Meta:
         model = models.AttackPoint
         fields = ('id', 'user', 'team', 'question', 'taken', 'point')
