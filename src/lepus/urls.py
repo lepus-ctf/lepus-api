@@ -18,6 +18,9 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 
+from lepus.views import TeamListView
+
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^api/team/', TeamListView.as_view(), name='team-list')
 ]

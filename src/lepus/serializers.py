@@ -1,6 +1,6 @@
 # encoding=utf-8
 
-from lapus import models
+from lepus import models
 
 from rest_framework import serializers
 
