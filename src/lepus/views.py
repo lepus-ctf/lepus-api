@@ -34,18 +34,28 @@ class QuestionView(QuestionListView, generics.RetrieveAPIView):
         return self.model.objects.filter(id=i)
 """
 
+# 滅べ
+"""
 class QuestionView(generics.RetrieveAPIView):
     serializer_class = QuestionSerializer
     model = serializer_class.Meta.model
     queryset = model.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
 
-class QuestionListView(generics.ListAPIView):
+class QuestionListView(QuestionView, generics.ListAPIView):
     serializer_class = QuestionView.serializer_class
     model = QuestionView.model
     queryset = QuestionView.queryset
     permission_classes = QuestionView.permission_classes
+"""
+class QuestionListView(generics.ListAPIView):
+    serializer_class = QuestionSerializer
+    model = serializer_class.Meta.model
+    queryset = model.objects.all()
+    permission_classes = (permissions.IsAuthenticated,)
 
+class QuestionView(QuestionListView, generics.RetrieveAPIView):
+    pass
 
 class CategoryView(generics.ListAPIView):
     serializer_class = CategorySerializer
