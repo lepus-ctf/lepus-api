@@ -20,6 +20,8 @@ class AuthView(generics.RetrieveUpdateAPIView):
     queryset = model.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
 
+# NOTICE:最悪
+"""
 class QuestionListView(generics.ListAPIView):
     serializer_class = QuestionSerializer
     model = serializer_class.Meta.model
@@ -30,24 +32,19 @@ class QuestionView(QuestionListView, generics.RetrieveAPIView):
     def get_queryset(self):
         i = self.kwargs.get("pk")
         return self.model.objects.filter(id=i)
-
 """
+
 class QuestionView(generics.RetrieveAPIView):
     serializer_class = QuestionSerializer
     model = serializer_class.Meta.model
     queryset = model.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
 
-    def get_queryset(self):
-        i = self.kwargs.get("pk")
-        return self.model.objects.filter(id=i)
-
 class QuestionListView(generics.ListAPIView):
     serializer_class = QuestionView.serializer_class
     model = QuestionView.model
     queryset = QuestionView.queryset
     permission_classes = QuestionView.permission_classes
-"""
 
 
 class CategoryView(generics.ListAPIView):
