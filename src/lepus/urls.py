@@ -24,6 +24,6 @@ from lepus.views import QuestionView
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/team/$', TeamListView.as_view(), name='team-list'),
-    url(r'^api/question/$', QuestionView.as_view(), name='questions'),
-    url(r'^api/question/(?P<pk>[0-9]+)$', QuestionView.as_view(), name='question')
+    url(r'^api/questions/$', QuestionView.as_view(), name='questions'),
+    url(r'^api/questions/(?P<pk>[0-9]+)$', QuestionView.as_view(), name='question')
 ]
