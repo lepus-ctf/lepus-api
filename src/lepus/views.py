@@ -10,6 +10,9 @@ class TeamListView(generics.ListAPIView):
     queryset = model.objects.all()
     permission_classes = (permissions.AllowAny,)
 
+    def get_queryset(self):
+        i = self.kwargs.get("pk")
+        return self.model.objects.filter(id=i)
 
 class AuthView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
@@ -23,6 +26,11 @@ class QuestionView(generics.ListAPIView):
     model = serializer_class.Meta.model
     queryset = model.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
+    lookup_url_kwarg = 'pk'
+
+    def get_queryset(self):
+        i = self.kwargs.get("pk")
+        return self.model.objects.filter(id=i)
 
 
 class CategoryView(generics.ListAPIView):
@@ -31,6 +39,9 @@ class CategoryView(generics.ListAPIView):
     queryset = model.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
 
+    def get_queryset(self):
+        i = self.kwargs.get("pk")
+        return self.model.objects.filter(id=i)
 
 class FileView(generics.ListAPIView):
     serializer_class = FileSerializer
@@ -38,6 +49,9 @@ class FileView(generics.ListAPIView):
     queryset = model.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
 
+    def get_queryset(self):
+        i = self.kwargs.get("pk")
+        return self.model.objects.filter(id=i)
 
 class AnswerView(generics.CreateAPIView):
     serializer_class = AnswerSerializer
@@ -45,6 +59,9 @@ class AnswerView(generics.CreateAPIView):
     queryset = model.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
 
+    def get_queryset(self):
+        i = self.kwargs.get("pk")
+        return self.model.objects.filter(id=i)
 
 class NoticeView(generics.ListAPIView):
     serializer_class = NoticeSerializer
@@ -52,5 +69,8 @@ class NoticeView(generics.ListAPIView):
     queryset = model.objects.all()
     permission_classes = (permissions.AllowAny,)
 
+    def get_queryset(self):
+        i = self.kwargs.get("pk")
+        return self.model.objects.filter(id=i)
 
 # TODO:AttackPointのAPIを開発する
