@@ -18,12 +18,12 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 
-from lepus.views import TeamListView
+from lepus.views import TeamListView, QuestionListView
 from lepus.views import QuestionView
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/team/$', TeamListView.as_view(), name='team-list'),
-    url(r'^api/questions/$', QuestionView.as_view(), name='questions'),
+    url(r'^api/questions/$', QuestionListView.as_view(), name='questions'),
     url(r'^api/questions/(?P<pk>[0-9]+)$', QuestionView.as_view(), name='question')
 ]
