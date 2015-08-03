@@ -16,6 +16,7 @@ class QuestionViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = QuestionSerializer
     queryset = serializer_class.Meta.model.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
+
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('category',)
 
@@ -37,9 +38,8 @@ class FileViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = serializer_class.Meta.model.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
 
-    def get_queryset(self):
-        i = self.kwargs.get("pk")
-        return self.model.objects.filter(id=i)
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_fields = ('question',)
 
 
 class AnswerView(generics.CreateAPIView):
@@ -48,19 +48,10 @@ class AnswerView(generics.CreateAPIView):
     queryset = model.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
 
-    def get_queryset(self):
-        i = self.kwargs.get("pk")
-        return self.model.objects.filter(id=i)
 
-
-class NoticeView(generics.ListAPIView):
+class NoticeViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = NoticeSerializer
-    model = serializer_class.Meta.model
-    queryset = model.objects.all()
+    queryset = serializer_class.Meta.model.objects.all()
     permission_classes = (permissions.AllowAny,)
-
-    def get_queryset(self):
-        i = self.kwargs.get("pk")
-        return self.model.objects.filter(id=i)
 
 # TODO:AttackPointのAPIを開発する
