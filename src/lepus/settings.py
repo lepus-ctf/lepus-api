@@ -76,6 +76,12 @@ TEMPLATES = [
 WSGI_APPLICATION = 'lepus.wsgi.application'
 
 
+# supporting filtering
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',)
+}
+
+
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 

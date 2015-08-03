@@ -19,13 +19,12 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from rest_framework.routers import SimpleRouter
 
-from lepus.views import TeamListView, QuestionViewSet
+from lepus.views import QuestionViewSet
 
 router = SimpleRouter()
 router.register(r'questions', QuestionViewSet)
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^api/team/$', TeamListView.as_view(), name='team-list'),
     url(r'api/', include(router.urls, namespace='api'))
 ]
