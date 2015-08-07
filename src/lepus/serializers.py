@@ -60,36 +60,42 @@ class AnswerSerializer(serializers.ModelSerializer):
         read_only_fields = ('is_correct',)
         extra_kwargs = {'answer': {'write_only': True}}
 
-    def validate(self, attrs):
-        question = attrs['question']
+    def validate(self, data):
+        question = data['question']
         user = self.context.get('request').user
 
         # 対応するFlagの取得
         try:
-            flag = models.Flag.objects.filter(flag=attrs['answer'])
+            flag = models.Flag.objects.get(question=question, flag=data['answer'])
         except models.Flag.DoesNotExist:
             flag = None
 
         # 重複を許さない
-        if flag and models.Answer.objects.filter(user=user, flag=flag):
+        if flag and models.Answer.objects.filter(user=user, flag=flag).exists():
             raise serializers.ValidationError("既に解答済みです")
 
-        # questionにおいて制限数が0以下の時，無制限に解答を受け付ける
-        if question.max_failure > 0 or question.max_answers > 0:
+        # questionにおいて制限数が0未満の時，無制限に解答を受け付ける
+        if question.max_failure > 0:
             if question.max_answers <= models.Answer.objects.filter(flag=flag, question=question).count():
                 raise serializers.ValidationError("最大正答者数を超えました")
+
+        if question.max_answers > 0:
             if question.max_failure >= models.Answer.objects.filter(question=question, user=user).count():
                 raise serializers.ValidationError("解答制限数を超えました")
 
-        return attrs
+        return data
 
     def create(self, validated_data):
-        answer = models.Answer(**validated_data)
-        user = self.context.get('request').user
-        answer.user = user
-        answer.team = user.team
+        validated_data['user'] = self.context.get('request').user
+        validated_data['team'] = validated_data['user'].team
 
-        return answer
+        try:
+            validated_data['flag'] = models.Flag.objects.get(question=validated_data['question'],
+                                                             flag=validated_data['answer'])
+        except models.Flag.DoesNotExist:
+            pass
+
+        return super(AnswerSerializer, self).create(validated_data)
 
 
 class AttackPointSerializer(serializers.ModelSerializer):
