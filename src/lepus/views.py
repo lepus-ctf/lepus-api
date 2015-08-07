@@ -1,5 +1,8 @@
 # encoding=utf-8
 from rest_framework import generics, permissions, viewsets, filters
+from django.contrib.auth import authenticate
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
 from .serializers import TeamSerializer, UserSerializer, QuestionSerializer, CategorySerializer, FileSerializer, \
     AnswerSerializer, NoticeSerializer
 
@@ -9,7 +12,28 @@ class AuthView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
     model = serializer_class.Meta.model
     queryset = model.objects.all()
-    permission_classes = (permissions.IsAuthenticated,)
+    #permission_classes = (permissions.IsAuthenticated,)
+    
+    @api_view(['GET', 'POST'])
+    def auth(request):
+        """
+        Return a list of all users.
+        """
+        
+        if request.method == 'POST':
+        
+            username = request.POST['username']
+            password = request.POST['password']
+
+            user = authenticate(username=username, password=password)
+
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+                    return Response(user)
+
+
+        return Response('failed')
 
 
 class QuestionViewSet(viewsets.ReadOnlyModelViewSet):

@@ -41,7 +41,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'is_staff', 'password', 'last_login', 'last_score_time', 'team', 'seat', 'points')
         read_only_fields = ('id', 'username', 'is_staff', 'last_login', 'last_score_time', 'team', 'seat', 'points')
         extra_kwargs = {'password': {'write_only': True}}
-
+        
         # TODO:RESTでユーザ作成対応したら頑張る
         # def create(self, validated_data):
         #     try:

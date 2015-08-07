@@ -19,7 +19,7 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from rest_framework.routers import SimpleRouter
 
-from lepus.views import QuestionViewSet, TeamViewSet, CategoryViewSet, FileViewSet, NoticeViewSet, AnswerView
+from lepus.views import QuestionViewSet, TeamViewSet, CategoryViewSet, FileViewSet, NoticeViewSet, AnswerView, AuthView
 
 router = SimpleRouter()
 router.register(r'questions', QuestionViewSet)
@@ -31,5 +31,6 @@ router.register(r'notices', NoticeViewSet)
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/answer/$', AnswerView.as_view(), name='answer'),
+    url(r'^api/auth/$', AuthView.auth, name='auth'),
     url(r'api/', include(router.urls, namespace='api'))
 ]
