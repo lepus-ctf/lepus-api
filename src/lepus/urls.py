@@ -30,6 +30,6 @@ router.register(r'notices', NoticeViewSet)
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^answer/$', AnswerView.as_view(), name='answer'),
+    url(r'^api/answer/$', AnswerView.as_view(), name='answer'),
     url(r'api/', include(router.urls, namespace='api'))
 ]

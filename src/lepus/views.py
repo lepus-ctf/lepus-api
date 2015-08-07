@@ -48,6 +48,11 @@ class AnswerView(generics.CreateAPIView):
     queryset = model.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
 
+"""
+    def create(self, request, *args, **kwargs):
+        answer_serializer = AnswerSerializer(question=request.data['question'], answer=request.data['answer'],
+                                             user=request.user.id)
+"""
 
 class NoticeViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = NoticeSerializer
