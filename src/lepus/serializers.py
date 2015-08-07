@@ -76,12 +76,12 @@ class AnswerSerializer(serializers.ModelSerializer):
 
         # questionにおいて制限数が0未満の時，無制限に解答を受け付ける
         if question.max_failure > 0:
-            if question.max_answers <= models.Answer.objects.filter(flag=flag, question=question).count():
-                raise serializers.ValidationError("最大正答者数を超えました")
-
-        if question.max_answers > 0:
             if question.max_failure >= models.Answer.objects.filter(question=question, user=user).count():
                 raise serializers.ValidationError("解答制限数を超えました")
+
+        if question.max_answers > 0:
+            if question.max_answers <= models.Answer.objects.filter(flag=flag, question=question).count():
+                raise serializers.ValidationError("最大正答者数を超えました")
 
         return data
 
