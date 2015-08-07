@@ -62,7 +62,7 @@ class AnswerSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         question = data['question']
-        user = self.context.get('request').user
+        team = self.context.get('request').user.team
 
         # 対応するFlagの取得
         try:
@@ -71,12 +71,12 @@ class AnswerSerializer(serializers.ModelSerializer):
             flag = None
 
         # 重複を許さない
-        if flag and models.Answer.objects.filter(user=user, flag=flag).exists():
+        if flag and models.Answer.objects.filter(team=team, flag=flag).exists():
             raise serializers.ValidationError("既に解答済みです")
 
-        # questionにおいて制限数が0未満の時，無制限に解答を受け付ける
+        # questionにおいて制限数が1以上の時，無制限に解答を受け付ける
         if question.max_failure > 0:
-            if question.max_failure >= models.Answer.objects.filter(question=question, user=user).count():
+            if question.max_failure <= models.Answer.objects.filter(question=question, team=team).count():
                 raise serializers.ValidationError("解答制限数を超えました")
 
         if question.max_answers > 0:
