@@ -1,5 +1,7 @@
 # encoding=utf-8
 
+from datetime import datetime
+
 from lepus import models
 
 from rest_framework import serializers
@@ -94,6 +96,11 @@ class AnswerSerializer(serializers.ModelSerializer):
                                                              flag=validated_data['answer'])
         except models.Flag.DoesNotExist:
             pass
+
+        # 正解時に最終得点日時を更新する
+        if 'flag' in validated_data:
+            validated_data['team'].last_score_time = datetime.now()
+            validated_data['team'].save()
 
         return super(AnswerSerializer, self).create(validated_data)
 
