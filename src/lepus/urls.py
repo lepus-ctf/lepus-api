@@ -18,6 +18,7 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 from rest_framework.routers import SimpleRouter
+from rest_framework.urlpatterns import format_suffix_patterns
 
 from lepus.views import QuestionViewSet, TeamViewSet, CategoryViewSet, FileViewSet, NoticeViewSet, AnswerView, AuthView
 
@@ -31,6 +32,8 @@ router.register(r'notices', NoticeViewSet)
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/answer/$', AnswerView.as_view(), name='answer'),
-    url(r'^api/auth/$', AuthView.auth, name='auth'),
+    url(r'^api/auth/$', AuthView.as_view(), name='auth'),
     url(r'api/', include(router.urls, namespace='api'))
 ]
+
+urlpatterns = format_suffix_patterns(urlpatterns)

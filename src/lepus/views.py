@@ -1,39 +1,34 @@
 # encoding=utf-8
-from rest_framework import generics, permissions, viewsets, filters
-from django.contrib.auth import authenticate
+from rest_framework import generics, permissions, viewsets, filters, status
+from django.contrib.auth import authenticate, login
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+
 from .serializers import TeamSerializer, UserSerializer, QuestionSerializer, CategorySerializer, FileSerializer, \
     AnswerSerializer, NoticeSerializer
 
 
+
 # TODO:正しくAuthを実装する
-class AuthView(generics.RetrieveUpdateAPIView):
+
+class AuthView(generics.RetrieveAPIView):
     serializer_class = UserSerializer
-    model = serializer_class.Meta.model
-    queryset = model.objects.all()
-    #permission_classes = (permissions.IsAuthenticated,)
-    
-    @api_view(['GET', 'POST'])
-    def auth(request):
-        """
-        Return a list of all users.
-        """
-        
-        if request.method == 'POST':
-        
-            username = request.POST['username']
-            password = request.POST['password']
+    permission_classes = (permissions.IsAuthenticated,)
 
-            user = authenticate(username=username, password=password)
+    def get(self, request, *args, **kwargs):
+        return Response(UserSerializer(request.user).data)
 
-            if user is not None:
-                if user.is_active:
-                    login(request, user)
-                    return Response(user)
+    def post(self, request, *args, **kwargs):
+        name = request.POST['username']
+        password = request.POST['password']
 
+        user = authenticate(username=name, password=password)
 
-        return Response('failed')
+        if user is not None:
+            login(request, user)
+            serialized_user = UserSerializer(request.user)
+            return Response(serialized_user.data)
+
+        return Response({"error": "無効なID,パスワードです"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class QuestionViewSet(viewsets.ReadOnlyModelViewSet):
@@ -72,11 +67,13 @@ class AnswerView(generics.CreateAPIView):
     queryset = model.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
 
+
 """
     def create(self, request, *args, **kwargs):
         answer_serializer = AnswerSerializer(question=request.data['question'], answer=request.data['answer'],
                                              user=request.user.id)
 """
+
 
 class NoticeViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = NoticeSerializer
