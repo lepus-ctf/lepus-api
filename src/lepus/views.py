@@ -12,7 +12,7 @@ from .serializers import TeamSerializer, UserSerializer, QuestionSerializer, Cat
 
 class AuthView(generics.RetrieveAPIView):
     serializer_class = UserSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.AllowAny,)
 
     def get(self, request, *args, **kwargs):
         return Response(UserSerializer(request.user).data)
