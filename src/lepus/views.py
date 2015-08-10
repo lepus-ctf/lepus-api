@@ -15,7 +15,10 @@ class AuthView(generics.RetrieveAPIView):
     permission_classes = (permissions.AllowAny,)
 
     def get(self, request, *args, **kwargs):
-        return Response(UserSerializer(request.user).data)
+        if not request.user.is_anonymous():
+            return Response(UserSerializer(request.user).data)
+
+        return Response({"error": "未ログインです"}, status=status.HTTP_401_UNAUTHORIZED)
 
     def post(self, request, *args, **kwargs):
         name = request.POST['username']

@@ -35,5 +35,3 @@ urlpatterns = [
     url(r'^api/auth/$', AuthView.as_view(), name='auth'),
     url(r'api/', include(router.urls, namespace='api'))
 ]
-
-urlpatterns = format_suffix_patterns(urlpatterns)

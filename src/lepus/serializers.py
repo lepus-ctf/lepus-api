@@ -1,8 +1,9 @@
 # encoding=utf-8
+from django.contrib.auth import authenticate
 
 from datetime import datetime
 
-from lepus import models
+from lepus import models, validators
 
 from rest_framework import serializers
 
@@ -54,6 +55,29 @@ class UserSerializer(serializers.ModelSerializer):
         #         username=validated_data['username'],
         #     )
 
+class AuthSerializer(serializers.Serializer):
+    username = serializers.CharField("ユーザネーム", max_length=30, allow_null=False, error_messages={"require":"ユーザネームは必須です"})
+    password = serializers.CharField("パスワード", allow_null=False, error_messages={"require":"パスワードは必須です"})
+
+    def __init__(self, data, context):
+        self.username = data.get("username")
+        self.password = data.get("password")
+        self.request = context.get("request")
+
+        super(AuthSerializer, self).__init__()
+
+    def validate(self, data):
+        if not authenticate(username=data['username'], password=data['password']):
+            return validators.AuthenticationError('ユーザ名もしくはパスワードが間違っています')
+        return data
+
+    def get_authenticate_user(self):
+        user = authenticate(username=self.username, password=self.password)
+
+        if not user:
+            return False
+
+        return user
 
 
 class AnswerSerializer(serializers.ModelSerializer):
