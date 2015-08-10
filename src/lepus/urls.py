@@ -17,12 +17,12 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
-from rest_framework.routers import SimpleRouter
+from rest_framework.routers import DefaultRouter
 from rest_framework.urlpatterns import format_suffix_patterns
 
 from lepus.views import QuestionViewSet, TeamViewSet, CategoryViewSet, FileViewSet, NoticeViewSet, AnswerView, AuthView
 
-router = SimpleRouter()
+router = DefaultRouter()
 router.register(r'questions', QuestionViewSet)
 router.register(r'teams', TeamViewSet)
 router.register(r'categories', CategoryViewSet)
