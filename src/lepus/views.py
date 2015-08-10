@@ -34,9 +34,15 @@ class AuthView(generics.RetrieveAPIView):
         return Response({"error": "無効なID,パスワードです"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
+class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = CategorySerializer
+    queryset = serializer_class.Meta.model.objects.all() # FIXME:Questionが存在しないCategoryを隠す
+    permission_classes = (permissions.IsAuthenticated,)
+
+
 class QuestionViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = QuestionSerializer
-    queryset = serializer_class.Meta.model.objects.all()
+    queryset = serializer_class.Meta.model.objects.filter(is_public=True)
     permission_classes = (permissions.IsAuthenticated,)
 
     filter_backends = (filters.DjangoFilterBackend,)
@@ -48,11 +54,6 @@ class TeamViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = serializer_class.Meta.model.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
 
-
-class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
-    serializer_class = CategorySerializer
-    queryset = serializer_class.Meta.model.objects.all()
-    permission_classes = (permissions.IsAuthenticated,)
 
 
 class FileViewSet(viewsets.ReadOnlyModelViewSet):

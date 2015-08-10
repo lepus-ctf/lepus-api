@@ -9,20 +9,19 @@ from rest_framework import serializers
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    """カテゴリ"""
+
     class Meta:
         model = models.Category
         fields = ('id', 'name', 'ordering', 'updated_at')
-        read_only_fields = ('id', 'name', 'ordering', 'updated_at')
 
 
 class QuestionSerializer(serializers.ModelSerializer):
+    """問題"""
     class Meta:
         model = models.Question
         fields = (
             'id', 'category', 'ordering', 'title', 'sentence', 'max_answers', 'max_failure', 'created_at', 'updated_at')
-        read_only_fields = (
-            'id', 'category', 'ordering', 'title', 'sentence', 'max_answers', 'max_failure', 'created_at', 'updated_at')
-
 
 class FileSerializer(serializers.ModelSerializer):
     class Meta:

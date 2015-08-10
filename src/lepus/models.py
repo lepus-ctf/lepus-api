@@ -19,8 +19,9 @@ class Templete(models.Model):
 class Category(Templete):
     """問題のカテゴリ"""
     class Meta:
-        ordering = ['ordering']
+        ordering = ('ordering', )
         unique_together = (('name', 'ordering'),)
+
     name = models.CharField("カテゴリ名", max_length=50)
     ordering = models.IntegerField("表示順序", default=100)
 
@@ -30,7 +31,8 @@ class Category(Templete):
 class Question(Templete):
     """問題"""
     class Meta:
-        ordering = ['ordering']
+        ordering = ('ordering', )
+
     category = models.ForeignKey(Category, verbose_name="カテゴリ")
     ordering = models.IntegerField("表示順序", default=100, unique=True)
     title = models.CharField("タイトル", max_length=50)
