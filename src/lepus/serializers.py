@@ -44,7 +44,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'is_staff', 'password', 'last_login', 'last_score_time', 'team', 'seat', 'points')
         read_only_fields = ('id', 'username', 'is_staff', 'last_login', 'last_score_time', 'team', 'seat', 'points')
         extra_kwargs = {'password': {'write_only': True}}
-        
+
         # TODO:RESTでユーザ作成対応したら頑張る
         # def create(self, validated_data):
         #     try:
@@ -56,8 +56,8 @@ class UserSerializer(serializers.ModelSerializer):
         #     )
 
 class AuthSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=30, allow_null=False, error_messages={"require":"ユーザネームは必須です"}) # "ユーザネーム" 
-    password = serializers.CharField(allow_null=False, error_messages={"require":"パスワードは必須です"}) #"パスワード" 
+    username = serializers.CharField(max_length=30, allow_null=False, error_messages={"require":"ユーザネームは必須です"}) # "ユーザネーム"
+    password = serializers.CharField(allow_null=False, error_messages={"require":"パスワードは必須です"}) #"パスワード"
 
     def __init__(self, data, context):
         self.username = data.get("username")
@@ -102,11 +102,11 @@ class AnswerSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("既に解答済みです")
 
         # questionにおいて制限数が1以上の時，無制限に解答を受け付ける
-        if question.max_failure > 0:
+        if question.max_failure:
             if question.max_failure <= models.Answer.objects.filter(question=question, team=team).count():
                 raise serializers.ValidationError("解答制限数を超えました")
 
-        if question.max_answers > 0:
+        if question.max_answers:
             if question.max_answers <= models.Answer.objects.filter(flag=flag, question=question).count():
                 raise serializers.ValidationError("最大正答者数を超えました")
 
