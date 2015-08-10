@@ -56,8 +56,8 @@ class UserSerializer(serializers.ModelSerializer):
         #     )
 
 class AuthSerializer(serializers.Serializer):
-    username = serializers.CharField("ユーザネーム", max_length=30, allow_null=False, error_messages={"require":"ユーザネームは必須です"})
-    password = serializers.CharField("パスワード", allow_null=False, error_messages={"require":"パスワードは必須です"})
+    username = serializers.CharField(max_length=30, allow_null=False, error_messages={"require":"ユーザネームは必須です"}) # "ユーザネーム" 
+    password = serializers.CharField(allow_null=False, error_messages={"require":"パスワードは必須です"}) #"パスワード" 
 
     def __init__(self, data, context):
         self.username = data.get("username")
