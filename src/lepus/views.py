@@ -2,6 +2,8 @@
 from rest_framework.decorators import detail_route, list_route
 from rest_framework import generics, permissions, viewsets, filters, status, mixins
 from django.contrib.auth import authenticate, login, logout
+from django.shortcuts import get_object_or_404
+from django.http import Http404
 from rest_framework.response import Response
 
 from .serializers import AuthSerializer, TeamSerializer, UserSerializer, QuestionSerializer, CategorySerializer, FileSerializer, \
@@ -64,24 +66,22 @@ class QuestionViewSet(viewsets.ReadOnlyModelViewSet):
 
 class FileViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = FileSerializer
-    queryset = serializer_class.Meta.model.objects.filter(is_public=True, question__is_public=True)
+    queryset = serializer_class.Meta.model.objects.public()
     permission_classes = (permissions.IsAuthenticated,)
 
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('question',)
 
-    def download(self, **kwargs):
-        question_id = kwargs['question_id']
-        name = kwargs['name']
-        file = File.objects.get(question=question_id, name=name)
-        if file is not None:
-            mime = mimetypes.guess_type(file.url)
-            file_bin = open(file.url,'rb').read()
-            response = HttpResponse(file_bin, content_type=mime)
-            response['Content-Disposition'] = 'filename=%s' % file.name
-            return response
-        else:
-            return "" #FIXME
+
+def download_file(request, file_id, filename=""):
+    f = get_object_or_404(File.objects.public(), id=file_id)
+    if filename != f.name:
+        raise Http404
+    mime_type = mimetypes.guess_type(f.file.name)[0]
+    response = HttpResponse(content_type=mime_type)
+    response['Content-Disposition'] = 'attachment; filename=%s' % f.name
+    response.write(f.file.read())
+    return response
 
 
 class TeamViewSet(viewsets.ReadOnlyModelViewSet):

@@ -55,6 +55,10 @@ class Flag(Templete):
     def __str__(self):
         return self.flag
 
+class FileManager(models.Manager):
+    def public(self):
+        return self.get_queryset().filter(is_public=True, question__is_public=True)
+
 class File(Templete):
     """問題に添付するファイル"""
     question = models.ForeignKey(Question, verbose_name="問題")
@@ -62,9 +66,11 @@ class File(Templete):
     file = models.FileField(upload_to='question/', max_length=256, verbose_name="ファイル")
     is_public = models.BooleanField("公開するか", blank=True, default=True)
 
+    objects = FileManager()
+
     @property
     def url(self):
-        return normpath(join(BASE_DIR, self.file.name))
+        return reverse("download_file", args=(self.id, self.name))
 
     def __str__(self):
         return self.name
