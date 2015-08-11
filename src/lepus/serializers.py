@@ -37,7 +37,8 @@ class FileSerializer(serializers.ModelSerializer):
 class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Team
-        fields = ('id', 'name', 'display_name', 'token', 'points', 'last_score_time', 'created_at')
+        fields = ('id', 'name', 'display_name', 'token', 'points', 'last_score_time', 'created_at', 'questions')
+        read_only_fields = ('questions',)
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

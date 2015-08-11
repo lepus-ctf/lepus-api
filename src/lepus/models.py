@@ -30,6 +30,12 @@ class Category(Templete):
     def __str__(self):
         return self.name
 
+
+class QuestionManager(models.Manager):
+    def public(self):
+        return self.get_queryset().filter(is_public=True)
+
+
 class Question(Templete):
     """問題"""
     class Meta:
@@ -42,6 +48,8 @@ class Question(Templete):
     max_answers = models.IntegerField("最大回答者数", blank=True, null=True)
     max_failure = models.IntegerField("最大回答数", blank=True, null=True)
     is_public = models.BooleanField("公開にするか", blank=True, default=False)
+
+    objects = QuestionManager()
 
     def __str__(self):
         return self.title
@@ -118,6 +126,20 @@ class Team(Templete):
             points += answer.flag.point
 
         return points
+
+    @property
+    def questions(self):
+        data = []
+        for question in Question.objects.public():
+            answers = list(Answer.objects.filter(team=self, flag__question=question))
+            data.append({
+                "id":question.id,
+                "flags":len(answers),
+                "points":sum([a.flag.point for a in answers])
+            })
+
+        return data
+
 
 
 class User(AbstractUser, Templete):

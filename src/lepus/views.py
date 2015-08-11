@@ -57,7 +57,7 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
 
 class QuestionViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = QuestionSerializer
-    queryset = serializer_class.Meta.model.objects.filter(is_public=True)
+    queryset = serializer_class.Meta.model.objects.public()
     permission_classes = (permissions.IsAuthenticated,)
 
     filter_backends = (filters.DjangoFilterBackend,)
