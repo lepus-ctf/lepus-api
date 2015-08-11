@@ -62,6 +62,7 @@ class File(Templete):
 
     @property
     def url(self):
+        return "" # FIXME:
         return reverse('score.views.file_download', args=[self.id])
 
     def __str__(self):

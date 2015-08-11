@@ -49,20 +49,24 @@ class QuestionViewSet(viewsets.ReadOnlyModelViewSet):
     filter_fields = ('category',)
 
 
+class FileViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = FileSerializer
+    queryset = serializer_class.Meta.model.objects.filter(is_public=True, question__is_public=True)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_fields = ('question',)
+
+    def download(self):
+        # TODO:Implement
+        pass
+
+
 class TeamViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = TeamSerializer
     queryset = serializer_class.Meta.model.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
 
-
-
-class FileViewSet(viewsets.ReadOnlyModelViewSet):
-    serializer_class = FileSerializer
-    queryset = serializer_class.Meta.model.objects.all()
-    permission_classes = (permissions.IsAuthenticated,)
-
-    filter_backends = (filters.DjangoFilterBackend,)
-    filter_fields = ('question',)
 
 
 class AnswerView(generics.CreateAPIView):
