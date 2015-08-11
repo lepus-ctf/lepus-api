@@ -19,8 +19,9 @@ class Templete(models.Model):
 class Category(Templete):
     """問題のカテゴリ"""
     class Meta:
-        ordering = ['ordering']
+        ordering = ('ordering', )
         unique_together = (('name', 'ordering'),)
+
     name = models.CharField("カテゴリ名", max_length=50)
     ordering = models.IntegerField("表示順序", default=100)
 
@@ -30,13 +31,14 @@ class Category(Templete):
 class Question(Templete):
     """問題"""
     class Meta:
-        ordering = ['ordering']
+        ordering = ('ordering', )
+
     category = models.ForeignKey(Category, verbose_name="カテゴリ")
     ordering = models.IntegerField("表示順序", default=100, unique=True)
     title = models.CharField("タイトル", max_length=50)
     sentence = models.TextField("問題文")
-    max_answers = models.IntegerField("最大回答者数")
-    max_failure = models.IntegerField("最大回答数")
+    max_answers = models.IntegerField("最大回答者数", blank=True, null=True)
+    max_failure = models.IntegerField("最大回答数", blank=True, null=True)
     is_public = models.BooleanField("公開にするか", blank=True, default=False)
 
     def __str__(self):
@@ -60,6 +62,7 @@ class File(Templete):
 
     @property
     def url(self):
+        return "" # FIXME:
         return reverse('score.views.file_download', args=[self.id])
 
     def __str__(self):
@@ -177,6 +180,7 @@ class Notice(Templete):
         ordering = ['created_at']
     title = models.CharField("タイトル", max_length=80)
     body = models.TextField("本文")
+    is_public = models.BooleanField("公開にするか", blank=True, default=False)
 
     def __str__(self):
         return self.title

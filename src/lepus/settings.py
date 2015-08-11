@@ -112,3 +112,6 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+
+TEAM_TOKEN_SECRET_KEY = "CHANGE_ME"
+TEAM_TOKEN_INTERVAL = 300

@@ -9,18 +9,18 @@ from rest_framework import serializers
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    """カテゴリ"""
+
     class Meta:
         model = models.Category
         fields = ('id', 'name', 'ordering', 'updated_at')
-        read_only_fields = ('id', 'name', 'ordering', 'updated_at')
 
 
 class QuestionSerializer(serializers.ModelSerializer):
+    """問題"""
     class Meta:
         model = models.Question
         fields = (
-            'id', 'category', 'ordering', 'title', 'sentence', 'max_answers', 'max_failure', 'created_at', 'updated_at')
-        read_only_fields = (
             'id', 'category', 'ordering', 'title', 'sentence', 'max_answers', 'max_failure', 'created_at', 'updated_at')
 
 
@@ -28,14 +28,12 @@ class FileSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.File
         fields = ('id', 'url', 'name', 'question', 'created_at', 'updated_at')
-        read_only_fields = ('id', 'url', 'name', 'question', 'created_at', 'updated_at')
 
 
 class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Team
         fields = ('id', 'name', 'display_name', 'token', 'last_score_time', 'created_at')
-        read_only_fields = ('id', 'name', 'token', 'last_score_time', 'created_at')
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -57,9 +55,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class AuthSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=30, allow_null=False,
-                                     error_messages={"require": "ユーザネームは必須です"})  # "ユーザネーム"
-    password = serializers.CharField(allow_null=False, error_messages={"require": "パスワードは必須です"})  # "パスワード"
+    username = serializers.CharField(max_length=30, allow_null=False, error_messages={"require":"ユーザネームは必須です"}) # "ユーザネーム"
+    password = serializers.CharField(allow_null=False, error_messages={"require":"パスワードは必須です"}) #"パスワード"
 
     def __init__(self, data):
         self.username = data.get("username")
@@ -103,11 +100,11 @@ class AnswerSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("既に解答済みです")
 
         # questionにおいて制限数が1以上の時，無制限に解答を受け付ける
-        if question.max_failure > 0:
+        if question.max_failure:
             if question.max_failure <= models.Answer.objects.filter(question=question, team=team).count():
                 raise serializers.ValidationError("解答制限数を超えました")
 
-        if question.max_answers > 0:
+        if question.max_answers:
             if question.max_answers <= models.Answer.objects.filter(flag=flag, question=question).count():
                 raise serializers.ValidationError("最大正答者数を超えました")
 
@@ -142,4 +139,3 @@ class NoticeSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Notice
         fields = ('id', 'title', 'body', 'created_at', 'updated_at')
-        read_only_fields = ('id', 'title', 'body', 'created_at', 'updated_at')
