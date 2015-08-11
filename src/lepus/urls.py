@@ -20,11 +20,12 @@ from django.contrib import admin
 from rest_framework.routers import DefaultRouter
 from rest_framework.urlpatterns import format_suffix_patterns
 
-from lepus.views import AuthViewSet, QuestionViewSet, TeamViewSet, CategoryViewSet, FileViewSet, NoticeViewSet, AnswerView
+from lepus.views import AuthViewSet, QuestionViewSet, TeamViewSet, CategoryViewSet, FileViewSet, NoticeViewSet, AnswerViewSet
 
 router = DefaultRouter()
 router.register(r'auth', AuthViewSet, base_name="auth")
 router.register(r'questions', QuestionViewSet)
+router.register(r'answer', AnswerViewSet, base_name="answers")
 router.register(r'teams', TeamViewSet)
 router.register(r'categories', CategoryViewSet)
 router.register(r'files', FileViewSet)
@@ -32,6 +33,5 @@ router.register(r'notices', NoticeViewSet)
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^api/answer/$', AnswerView.as_view(), name='answer'),
     url(r'api/', include(router.urls, namespace='api'))
 ]

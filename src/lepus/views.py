@@ -1,11 +1,13 @@
 # encoding=utf-8
 from rest_framework.decorators import detail_route, list_route
-from rest_framework import generics, permissions, viewsets, filters, status
+from rest_framework import generics, permissions, viewsets, filters, status, mixins
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.response import Response
 
 from .serializers import AuthSerializer, TeamSerializer, UserSerializer, QuestionSerializer, CategorySerializer, FileSerializer, \
     AnswerSerializer, NoticeSerializer
+
+from .models import *
 
 
 class AuthViewSet(viewsets.ViewSet):
@@ -68,18 +70,11 @@ class TeamViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 
-class AnswerView(generics.CreateAPIView):
+class AnswerViewSet(mixins.CreateModelMixin,
+                    viewsets.GenericViewSet):
     serializer_class = AnswerSerializer
-    model = serializer_class.Meta.model
-    queryset = model.objects.all()
+    queryset = Answer.objects.filter(id=-1)
     permission_classes = (permissions.IsAuthenticated,)
-
-
-"""
-    def create(self, request, *args, **kwargs):
-        answer_serializer = AnswerSerializer(question=request.data['question'], answer=request.data['answer'],
-                                             user=request.user.id)
-"""
 
 
 class NoticeViewSet(viewsets.ReadOnlyModelViewSet):

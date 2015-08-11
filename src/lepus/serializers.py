@@ -82,7 +82,6 @@ class AnswerSerializer(serializers.ModelSerializer):
         model = models.Answer
         fields = ('question', 'answer', 'is_correct')
         read_only_fields = ('is_correct',)
-        extra_kwargs = {'answer': {'write_only': True}}
 
     def validate(self, data):
         question = data['question']
@@ -99,32 +98,45 @@ class AnswerSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("既に解答済みです")
 
         # questionにおいて制限数が1以上の時，無制限に解答を受け付ける
-        if question.max_failure:
+        if question.max_failure and question.max_failure >= 0:
             if question.max_failure <= models.Answer.objects.filter(question=question, team=team).count():
                 raise serializers.ValidationError("解答制限数を超えました")
 
-        if question.max_answers:
+        if question.max_answers and question.max_answers >= 0:
             if question.max_answers <= models.Answer.objects.filter(flag=flag, question=question).count():
                 raise serializers.ValidationError("最大正答者数を超えました")
 
         return data
 
     def create(self, validated_data):
-        validated_data['user'] = self.context.get('request').user
-        validated_data['team'] = validated_data['user'].team
+        user = self.context.get('request').user
+        team = user.team
 
+        question = validated_data['question']
+        answer = validated_data['answer']
+        flag = None
         try:
-            validated_data['flag'] = models.Flag.objects.get(question=validated_data['question'],
-                                                             flag=validated_data['answer'])
+            flag = models.Flag.objects.get(question=question, flag=answer)
         except models.Flag.DoesNotExist:
             pass
 
         # 正解時に最終得点日時を更新する
-        if 'flag' in validated_data:
-            validated_data['team'].last_score_time = datetime.now()
-            validated_data['team'].save()
+        if flag:
+            team.last_score_time = datetime.now()
+            user.last_score_time = datetime.now()
+            team.save()
+            user.save()
 
-        return super(AnswerSerializer, self).create(validated_data)
+        data = {
+            "user":user,
+            "team":team,
+            "question":question,
+            "answer":answer,
+            "flag":flag
+        }
+        answer = models.Answer(**data)
+        answer.save()
+        return answer
 
 
 class AttackPointSerializer(serializers.ModelSerializer):
