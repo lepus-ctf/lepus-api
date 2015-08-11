@@ -180,6 +180,7 @@ class Notice(Templete):
         ordering = ['created_at']
     title = models.CharField("タイトル", max_length=80)
     body = models.TextField("本文")
+    is_public = models.BooleanField("公開にするか", blank=True, default=False)
 
     def __str__(self):
         return self.title

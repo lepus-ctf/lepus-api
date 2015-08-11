@@ -85,7 +85,7 @@ class AnswerView(generics.CreateAPIView):
 
 class NoticeViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = NoticeSerializer
-    queryset = serializer_class.Meta.model.objects.all()
+    queryset = serializer_class.Meta.model.objects.filter(is_public=True)
     permission_classes = (permissions.AllowAny,)
 
 # TODO:AttackPointのAPIを開発する

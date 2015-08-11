@@ -4,8 +4,8 @@ from lepus.models import Category, Question, Team, User, Flag, Answer, Notice, F
     UserConnection
 
 class NoticeAdmin(admin.ModelAdmin):
-    list_display = ("id", "title", "body")
-    list_editable = ("title", "body")
+    list_display = ("id", "title", "body", "is_public")
+    list_editable = ("title", "body", "is_public")
 
 admin.site.register(Notice, NoticeAdmin)
 
