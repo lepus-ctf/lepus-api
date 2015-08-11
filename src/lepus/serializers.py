@@ -34,7 +34,6 @@ class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Team
         fields = ('id', 'name', 'display_name', 'token', 'last_score_time', 'created_at')
-        read_only_fields = ('id', 'name', 'token', 'last_score_time', 'created_at')
 
 
 class UserSerializer(serializers.ModelSerializer):
