@@ -3,9 +3,13 @@ from django.contrib.auth import authenticate
 
 from datetime import datetime
 
-from lepus import models, validators
+from lepus import models
 
-from rest_framework import serializers
+from rest_framework import serializers, status, exceptions
+
+
+class AuthenticationError(exceptions.APIException):
+    status_code = status.HTTP_401_UNAUTHORIZED
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -58,24 +62,19 @@ class AuthSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=30, allow_null=False, error_messages={"require":"ユーザネームは必須です"}) # "ユーザネーム"
     password = serializers.CharField(allow_null=False, error_messages={"require":"パスワードは必須です"}) #"パスワード"
 
-    def __init__(self, data):
-        self.username = data.get("username")
-        self.password = data.get("password")
-
-        super(AuthSerializer, self).__init__()
-
     def validate(self, data):
-        if not authenticate(username=data['username'], password=data['password']):
-            return validators.AuthenticationError('ユーザ名もしくはパスワードが間違っています')
+        self._user_cache = None
+        if data.get("username") and data.get("password"):
+            user = authenticate(username=data['username'], password=data['password'])
+            if user:
+                self._user_cache = user
+
+        if not self._user_cache:
+            raise AuthenticationError('ユーザ名もしくはパスワードが間違っています')
         return data
 
-    def get_authenticate_user(self):
-        user = authenticate(username=self.username, password=self.password)
-
-        if not user:
-            return False
-
-        return user
+    def get_user(self):
+        return self._user_cache
 
 
 class AnswerSerializer(serializers.ModelSerializer):

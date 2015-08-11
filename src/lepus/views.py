@@ -1,38 +1,31 @@
 # encoding=utf-8
+from rest_framework.decorators import detail_route, list_route
 from rest_framework import generics, permissions, viewsets, filters, status
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from rest_framework.response import Response
 
-from .serializers import TeamSerializer, UserSerializer, QuestionSerializer, CategorySerializer, FileSerializer, \
-    AnswerSerializer, NoticeSerializer, AuthSerializer
+from .serializers import AuthSerializer, TeamSerializer, UserSerializer, QuestionSerializer, CategorySerializer, FileSerializer, \
+    AnswerSerializer, NoticeSerializer
 
 
-
-# TODO:正しくAuthを実装する
-
-class AuthView(generics.RetrieveAPIView):
+class AuthViewSet(viewsets.ViewSet):
     serializer_class = AuthSerializer
-    permission_classes = (permissions.AllowAny,)
 
-    def get(self, request, *args, **kwargs):
-        if not request.user.is_anonymous():
+    def list(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
             return Response(UserSerializer(request.user).data)
 
         return Response({"error": "未ログインです"}, status=status.HTTP_401_UNAUTHORIZED)
 
-    def post(self, request, *args, **kwargs):
 
-        name = request.POST['username']
-        password = request.POST['password']
+    def create(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
+            logout(request)
 
-        user = authenticate(username=name, password=password)
-
-        if user is not None:
-            login(request, user)
-            serialized_user = UserSerializer(request.user)
-            return Response(serialized_user.data)
-
-        return Response({"error": "無効なID,パスワードです"}, status=status.HTTP_401_UNAUTHORIZED)
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            login(request, serializer.get_user())
+            return self.list(request, *args, **kwargs)
 
 
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
