@@ -8,7 +8,8 @@ from .serializers import AuthSerializer, TeamSerializer, UserSerializer, Questio
     AnswerSerializer, NoticeSerializer
 
 from .models import *
-
+from django.http import HttpResponse
+import mimetypes
 
 class AuthViewSet(viewsets.ViewSet):
     serializer_class = AuthSerializer
@@ -69,9 +70,17 @@ class FileViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('question',)
 
-    def download(self):
-        # TODO:Implement
-        pass
+    def download(self, **kwargs):
+        file_id = kwargs['file_id']
+        file = File.objects.get(id=file_id)
+        if file is not None:
+            mime = mimetypes.guess_type(file.url)
+            file_bin = open(file.url,'rb').read()
+            response = HttpResponse(file_bin, content_type=mime)
+            response['Content-Disposition'] = 'filename=%s' % file.name
+            return response
+        else:
+            return "" #FIXME
 
 
 class TeamViewSet(viewsets.ReadOnlyModelViewSet):

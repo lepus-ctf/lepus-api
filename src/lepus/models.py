@@ -8,6 +8,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.urlresolvers import reverse
 from django.contrib.auth.hashers import make_password, check_password
+from os.path import normpath, join
+from lepus.settings import BASE_DIR
 
 class Templete(models.Model):
     """全てのモデルで共通のフィールドを含んだAbstract Model"""
@@ -62,8 +64,7 @@ class File(Templete):
 
     @property
     def url(self):
-        return "" # FIXME:
-        return reverse('score.views.file_download', args=[self.id])
+        return normpath(join(BASE_DIR, self.file.name))
 
     def __str__(self):
         return self.name

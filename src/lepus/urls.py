@@ -34,5 +34,6 @@ router.register(r'notices', NoticeViewSet)
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^api/files/(?P<file_id>\w+)/$', FileViewSet.download),
     url(r'api/', include(router.urls, namespace='api'))
 ]
