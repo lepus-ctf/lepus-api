@@ -71,8 +71,9 @@ class FileViewSet(viewsets.ReadOnlyModelViewSet):
     filter_fields = ('question',)
 
     def download(self, **kwargs):
-        file_id = kwargs['file_id']
-        file = File.objects.get(id=file_id)
+        question_id = kwargs['question_id']
+        name = kwargs['name']
+        file = File.objects.get(question=question_id, name=name)
         if file is not None:
             mime = mimetypes.guess_type(file.url)
             file_bin = open(file.url,'rb').read()
