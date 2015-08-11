@@ -27,6 +27,11 @@ class AuthViewSet(viewsets.ViewSet):
             login(request, serializer.get_user())
             return self.list(request, *args, **kwargs)
 
+    @list_route(methods=["post"])
+    def logout(self, request, *args, **kwargs):
+        logout(request)
+        return self.list(request, *args, **kwargs)
+
 
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = CategorySerializer
