@@ -7,7 +7,7 @@ from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.urlresolvers import reverse
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password, check_password
 
 class Templete(models.Model):
     """全てのモデルで共通のフィールドを含んだAbstract Model"""
@@ -81,6 +81,17 @@ class Team(Templete):
     def set_password(self, password):
         self.password = make_password(password)
 
+    def check_password(self, raw_password):
+        """
+        Return a boolean of whether the raw_password was correct. Handles
+        hashing formats behind the scenes.
+        """
+        def setter(raw_password):
+            self.set_password(raw_password)
+            # Password hash upgrades shouldn't be considered password changes.
+            self._password = None
+            self.save(update_fields=["password"])
+        return check_password(raw_password, self.password, setter)
 
     @property
     def token(self):

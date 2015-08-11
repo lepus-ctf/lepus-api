@@ -20,10 +20,11 @@ from django.contrib import admin
 from rest_framework.routers import DefaultRouter
 from rest_framework.urlpatterns import format_suffix_patterns
 
-from lepus.views import AuthViewSet, QuestionViewSet, TeamViewSet, CategoryViewSet, FileViewSet, NoticeViewSet, AnswerViewSet
+from lepus.views import AuthViewSet, UserViewSet, QuestionViewSet, TeamViewSet, CategoryViewSet, FileViewSet, NoticeViewSet, AnswerViewSet
 
 router = DefaultRouter()
 router.register(r'auth', AuthViewSet, base_name="auth")
+router.register(r'users', UserViewSet)
 router.register(r'questions', QuestionViewSet)
 router.register(r'answer', AnswerViewSet, base_name="answers")
 router.register(r'teams', TeamViewSet)

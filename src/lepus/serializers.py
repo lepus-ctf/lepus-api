@@ -39,23 +39,40 @@ class TeamSerializer(serializers.ModelSerializer):
         model = models.Team
         fields = ('id', 'name', 'display_name', 'token', 'last_score_time', 'created_at')
 
-
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.User
-        fields = ('id', 'username', 'is_staff', 'password', 'last_login', 'last_score_time', 'team', 'seat', 'points')
-        read_only_fields = ('id', 'username', 'is_staff', 'last_login', 'last_score_time', 'team', 'seat', 'points')
+        fields = ("id", "username", "password", "team", "points", "last_score_time", "team_name", "team_password")
+        read_only_fields = ("id", "team", "points", "last_score_time")
         extra_kwargs = {'password': {'write_only': True}}
 
-        # TODO:RESTでユーザ作成対応したら頑張る
-        # def create(self, validated_data):
-        #     try:
-        #         team = models.Team.objects.get(name=validated_data['team'])
-        #     except models.Team.DoesNotExist:
-        #
-        #     user = models.User(
-        #         username=validated_data['username'],
-        #     )
+    team_name = serializers.CharField(write_only=True, allow_null=False, error_messages={"require":"チーム名は必須です"})
+    team_password = serializers.CharField(write_only=True, allow_null=False, error_messages={"require":"チームパスワードは必須です"})
+
+    def validate_password(self, value):
+        # FIXME:許可するパターンを指定
+        return value
+
+    def validate(self, data):
+        try:
+            team = models.Team.objects.get(name=data.get("team_name"))
+            if not team.check_password(data.get("team_password")):
+                raise models.Team.DoesNotExist()
+        except models.Team.DoesNotExist:
+            raise serializers.ValidationError("チームの認証情報が一致しません")
+
+        data = {
+            "team":team,
+            "username":data["username"],
+            "password":data["password"]
+        }
+        return data
+
+    def create(self, validated_data):
+        user = models.User(**validated_data)
+        user.set_password(validated_data["password"])
+        user.save()
+        return user
 
 
 class AuthSerializer(serializers.Serializer):

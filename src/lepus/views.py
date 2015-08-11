@@ -34,6 +34,17 @@ class AuthViewSet(viewsets.ViewSet):
         logout(request)
         return self.list(request, *args, **kwargs)
 
+class UserViewSet(mixins.CreateModelMixin,
+                  mixins.ListModelMixin,
+                  mixins.RetrieveModelMixin,
+                  viewsets.GenericViewSet):
+    serializer_class = UserSerializer
+    queryset = User.objects.filter(id=-1)
+
+    def get_queryset(self):
+        return User.objects.filter(team=self.request.user.team)
+
+
 
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = CategorySerializer
