@@ -4,14 +4,14 @@ from django.contrib.auth import authenticate, login
 from rest_framework.response import Response
 
 from .serializers import TeamSerializer, UserSerializer, QuestionSerializer, CategorySerializer, FileSerializer, \
-    AnswerSerializer, NoticeSerializer
+    AnswerSerializer, NoticeSerializer, AuthSerializer
 
 
 
 # TODO:正しくAuthを実装する
 
 class AuthView(generics.RetrieveAPIView):
-    serializer_class = UserSerializer
+    serializer_class = AuthSerializer
     permission_classes = (permissions.AllowAny,)
 
     def get(self, request, *args, **kwargs):
@@ -21,6 +21,7 @@ class AuthView(generics.RetrieveAPIView):
         return Response({"error": "未ログインです"}, status=status.HTTP_401_UNAUTHORIZED)
 
     def post(self, request, *args, **kwargs):
+
         name = request.POST['username']
         password = request.POST['password']
 

@@ -44,7 +44,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'is_staff', 'password', 'last_login', 'last_score_time', 'team', 'seat', 'points')
         read_only_fields = ('id', 'username', 'is_staff', 'last_login', 'last_score_time', 'team', 'seat', 'points')
         extra_kwargs = {'password': {'write_only': True}}
-        
+
         # TODO:RESTでユーザ作成対応したら頑張る
         # def create(self, validated_data):
         #     try:
@@ -55,14 +55,15 @@ class UserSerializer(serializers.ModelSerializer):
         #         username=validated_data['username'],
         #     )
 
-class AuthSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=30, allow_null=False, error_messages={"require":"ユーザネームは必須です"}) # "ユーザネーム" 
-    password = serializers.CharField(allow_null=False, error_messages={"require":"パスワードは必須です"}) #"パスワード" 
 
-    def __init__(self, data, context):
+class AuthSerializer(serializers.Serializer):
+    username = serializers.CharField(max_length=30, allow_null=False,
+                                     error_messages={"require": "ユーザネームは必須です"})  # "ユーザネーム"
+    password = serializers.CharField(allow_null=False, error_messages={"require": "パスワードは必須です"})  # "パスワード"
+
+    def __init__(self, data):
         self.username = data.get("username")
         self.password = data.get("password")
-        self.request = context.get("request")
 
         super(AuthSerializer, self).__init__()
 
