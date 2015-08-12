@@ -63,6 +63,10 @@ class Flag(Templete):
     def __str__(self):
         return self.flag
 
+    @property
+    def teams(self):
+        return [a["team_id"] for a in Answer.objects.filter(flag=self).values("team_id")]
+
 class FileManager(models.Manager):
     def public(self):
         return self.get_queryset().filter(is_public=True, question__is_public=True)
@@ -159,6 +163,14 @@ class User(AbstractUser, Templete):
             points += answer.flag.point
 
         return points
+
+    @property
+    def ip(self):
+        try:
+            user_connection = self.userconnection_set.order_by("-updated_at")[0]
+        except IndexError:
+            return None
+        return user_connection.ip
 
 class UserConnection(Templete):
     """ユーザの接続元を管理するモデル"""
