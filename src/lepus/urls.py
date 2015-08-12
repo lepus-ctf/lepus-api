@@ -22,6 +22,8 @@ from rest_framework.urlpatterns import format_suffix_patterns
 
 from lepus.views import AuthViewSet, UserViewSet, QuestionViewSet, TeamViewSet, CategoryViewSet, FileViewSet, NoticeViewSet, AnswerViewSet, download_file
 
+from lepus.admin.views import router as admin_router
+
 router = DefaultRouter()
 router.register(r'auth', AuthViewSet, base_name="auth")
 router.register(r'users', UserViewSet)
@@ -35,5 +37,6 @@ router.register(r'notices', NoticeViewSet)
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^files/(\d+)/(.+)$', download_file, name="download_file"),
+    url(r'adminapi/', include(admin_router.urls, namespace='adminapi')),
     url(r'api/', include(router.urls, namespace='api'))
 ]

@@ -17,7 +17,8 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Category
-        fields = ('id', 'name', 'ordering', 'updated_at')
+        fields = ('id', 'name', 'ordering', 'created_at', 'updated_at')
+        read_only_fields = ('id', 'created_at', 'updated_at')
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -37,8 +38,27 @@ class FileSerializer(serializers.ModelSerializer):
 class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Team
-        fields = ('id', 'name', 'display_name', 'token', 'points', 'last_score_time', 'created_at', 'questions')
-        read_only_fields = ('questions',)
+        fields = ('id', 'name', 'display_name', 'password', 'token', 'points', 'last_score_time', 'created_at', 'updated_at', 'questions')
+        read_only_fields = ('id', 'token', 'points', 'last_score_time', 'questions', 'created_at', 'updated_at')
+        extra_kwargs = {'password': {'write_only': True, 'required': False}}
+
+    def create(self, validated_data):
+        password = validated_data.pop("password", None)
+        instance = super(TeamSerializer, self).create(validated_data)
+        if password:
+            instance.set_password(validated_data["password"])
+        else:
+            instance.password = "!"
+        instance.save()
+        return instance
+
+    def update(self, instance, validated_data):
+        password = validated_data.pop("password", None)
+        instance = super(TeamSerializer, self).update(instance, validated_data)
+        if password:
+            instance.set_password(password)
+            instance.save()
+        return instance
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -168,3 +188,4 @@ class NoticeSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Notice
         fields = ('id', 'title', 'body', 'created_at', 'updated_at')
+        
