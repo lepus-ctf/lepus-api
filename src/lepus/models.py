@@ -7,7 +7,9 @@ from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.urlresolvers import reverse
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password, check_password
+from os.path import normpath, join
+from lepus.settings import BASE_DIR
 
 class Templete(models.Model):
     """全てのモデルで共通のフィールドを含んだAbstract Model"""
@@ -19,25 +21,35 @@ class Templete(models.Model):
 class Category(Templete):
     """問題のカテゴリ"""
     class Meta:
-        ordering = ['ordering']
+        ordering = ('ordering', )
         unique_together = (('name', 'ordering'),)
+
     name = models.CharField("カテゴリ名", max_length=50)
     ordering = models.IntegerField("表示順序", default=100)
 
     def __str__(self):
         return self.name
 
+
+class QuestionManager(models.Manager):
+    def public(self):
+        return self.get_queryset().filter(is_public=True)
+
+
 class Question(Templete):
     """問題"""
     class Meta:
-        ordering = ['ordering']
+        ordering = ('ordering', )
+
     category = models.ForeignKey(Category, verbose_name="カテゴリ")
     ordering = models.IntegerField("表示順序", default=100, unique=True)
     title = models.CharField("タイトル", max_length=50)
     sentence = models.TextField("問題文")
-    max_answers = models.IntegerField("最大回答者数")
-    max_failure = models.IntegerField("最大回答数")
+    max_answers = models.IntegerField("最大回答者数", blank=True, null=True)
+    max_failure = models.IntegerField("最大回答数", blank=True, null=True)
     is_public = models.BooleanField("公開にするか", blank=True, default=False)
+
+    objects = QuestionManager()
 
     def __str__(self):
         return self.title
@@ -51,6 +63,10 @@ class Flag(Templete):
     def __str__(self):
         return self.flag
 
+class FileManager(models.Manager):
+    def public(self):
+        return self.get_queryset().filter(is_public=True, question__is_public=True)
+
 class File(Templete):
     """問題に添付するファイル"""
     question = models.ForeignKey(Question, verbose_name="問題")
@@ -58,9 +74,11 @@ class File(Templete):
     file = models.FileField(upload_to='question/', max_length=256, verbose_name="ファイル")
     is_public = models.BooleanField("公開するか", blank=True, default=True)
 
+    objects = FileManager()
+
     @property
     def url(self):
-        return reverse('score.views.file_download', args=[self.id])
+        return reverse("download_file", args=(self.id, self.name))
 
     def __str__(self):
         return self.name
@@ -78,6 +96,17 @@ class Team(Templete):
     def set_password(self, password):
         self.password = make_password(password)
 
+    def check_password(self, raw_password):
+        """
+        Return a boolean of whether the raw_password was correct. Handles
+        hashing formats behind the scenes.
+        """
+        def setter(raw_password):
+            self.set_password(raw_password)
+            # Password hash upgrades shouldn't be considered password changes.
+            self._password = None
+            self.save(update_fields=["password"])
+        return check_password(raw_password, self.password, setter)
 
     @property
     def token(self):
@@ -97,6 +126,20 @@ class Team(Templete):
             points += answer.flag.point
 
         return points
+
+    @property
+    def questions(self):
+        data = []
+        for question in Question.objects.public():
+            answers = list(Answer.objects.filter(team=self, flag__question=question))
+            data.append({
+                "id":question.id,
+                "flags":len(answers),
+                "points":sum([a.flag.point for a in answers])
+            })
+
+        return data
+
 
 
 class User(AbstractUser, Templete):
@@ -177,6 +220,7 @@ class Notice(Templete):
         ordering = ['created_at']
     title = models.CharField("タイトル", max_length=80)
     body = models.TextField("本文")
+    is_public = models.BooleanField("公開にするか", blank=True, default=False)
 
     def __str__(self):
         return self.title

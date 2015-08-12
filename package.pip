@@ -2,3 +2,4 @@ django<1.9
 Markdown
 django-filter
 djangorestframework
+django-debug-toolbar

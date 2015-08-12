@@ -63,3 +63,7 @@ target/
 
 #don't save .idea folder
 .idea/
+*.iml
+
+# Uploaded files
+src/question
