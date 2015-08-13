@@ -63,8 +63,8 @@ class TeamSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.User
-        fields = ("id", "username", "password", "team", "points", "last_score_time", "team_name", "team_password")
-        read_only_fields = ("id", "team", "points", "last_score_time")
+        fields = ("id", "username", "password", "team", "points", "last_score_time", "team_name", "team_password", "is_staff")
+        read_only_fields = ("id", "team", "points", "last_score_time", "is_staff")
         extra_kwargs = {'password': {'write_only': True}}
 
     team_name = serializers.CharField(write_only=True, allow_null=False, error_messages={"require":"チーム名は必須です"})
@@ -188,4 +188,3 @@ class NoticeSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Notice
         fields = ('id', 'title', 'body', 'created_at', 'updated_at')
-        
