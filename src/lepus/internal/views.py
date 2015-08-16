@@ -7,13 +7,13 @@ from rest_framework import viewsets, mixins
 from rest_framework.routers import DefaultRouter
 
 from lepus.models import *
-from lepus.internal.serializers import AttacpPointSerializer, UserSerializer
+from lepus.internal.serializers import AttackPointSerializer, UserSerializer
 
 router = DefaultRouter()
 
 class AttackPointViewSet(mixins.CreateModelMixin,
                          viewsets.GenericViewSet):
-    serializer_class = AttacpPointSerializer
+    serializer_class = AttackPointSerializer
     queryset = AttackPoint.objects.all()
 
 router.register("attackpoints", AttackPointViewSet)

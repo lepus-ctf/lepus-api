@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 from lepus.models import *
 
-class AttacpPointSerializer(serializers.ModelSerializer):
+class AttackPointSerializer(serializers.ModelSerializer):
     class Meta:
         model = AttackPoint
         fields = ('id', 'user', 'team', 'question', 'point', 'token', 'created_at', 'updated_at')
