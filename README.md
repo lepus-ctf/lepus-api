@@ -1,5 +1,5 @@
-# Lapus
-LapusはRESTfulなCTFサーバーです．
+# Lepus
+LepusはRESTfulなCTFサーバーです．
 
 # ライセンス
 MITライセンスに準じます
