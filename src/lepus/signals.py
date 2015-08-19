@@ -15,12 +15,25 @@ def send_realtime_event(data):
 def on_answer_sent(sender, **kwargs):
     if kwargs["created"]:
         answer = kwargs["instance"]
+
+        if answer.is_correct:
+            # For Users
+            data = {
+                "type":"answer",
+                "user":answer.user.id,
+                "team":answer.team.id,
+                "question":answer.flag.question_id
+            }
+            send_realtime_event(data)
+
+        # For Admin
         data = {
             "type":"answer",
             "user":answer.user.id,
             "team":answer.team.id,
             "answer":answer.answer,
             "flag":answer.flag.id if answer.flag else None,
-            "is_correct":answer.is_correct
+            "is_correct":answer.is_correct,
+            "is_admin":True
         }
         send_realtime_event(data)

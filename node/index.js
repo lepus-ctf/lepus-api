@@ -12,10 +12,17 @@ app.get('/realtime/', function(req, res){
 
 app.post('/events/', function(req, res){
   if(req.body){
-    io.emit("event", req.body);
+    if(req.body.is_admin){
+      io.to("admin").emit("event", req.body);
+    }else{
+      io.emit("event", req.body);
+    }
+    res.status(201);
+    res.send("{}");
+    return;
   }
-  res.status(201);
-  res.send("{}");
+  res.status(400);
+  res.send("400 Bad Request");
 });
 
 io.on("connection", function(socket){
@@ -29,10 +36,14 @@ io.on("connection", function(socket){
       "Accept":"application/json"
     }
   },function (error, response, body){
-    if (!error && response.statusCode == 200 && body.is_staff) {
-      allowed = true;
-    }else{
+    if (error || response.statusCode != 200){
+      console.log("Connected from Unknown User");
       socket.disconnect();
+    }else if(body.is_staff) {
+      console.log("Connected from " + body.username + " (admin)");
+      socket.join("admin");
+    }else{
+      console.log("Connected from " + body.username);
     }
   });
 
