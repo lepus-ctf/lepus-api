@@ -38,7 +38,7 @@ router.register(r'notices', NoticeViewSet)
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^files/(\d+)/(.+)$', download_file, name="download_file"),
-    url(r'adminapi/', include(admin_router.urls, namespace='adminapi')),
+    url(r'^adminapi/', include(admin_router.urls, namespace='adminapi')),
     url(r'^internalapi/', include(internal_router.urls, namespace='internalapi')),
-    url(r'api/', include(router.urls, namespace='api'))
+    url(r'^api/', include(router.urls, namespace='api'))
 ]
