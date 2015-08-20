@@ -53,7 +53,7 @@ class Question(Templete):
 
     @property
     def points(self):
-        return sum([o.point for o in list(Flag.objects.filter(question=self))])
+        return sum([o.point for o in self.flag_set.all()])
 
     def __str__(self):
         return self.title
