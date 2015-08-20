@@ -11,3 +11,5 @@ class UserConnectionMiddleware(object):
 
         if user.is_authenticated() and ip:
             UserConnection.update(user, ip)
+
+from lepus.signals import *

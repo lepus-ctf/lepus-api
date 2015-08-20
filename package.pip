@@ -3,3 +3,4 @@ Markdown
 django-filter
 djangorestframework
 django-debug-toolbar
+requests
