@@ -5,6 +5,7 @@ import time
 import datetime
 from django.conf import settings
 from django.db import models
+from django.contrib.auth.models import UserManager as DjangoUserManager
 from django.contrib.auth.models import AbstractUser
 from django.core.urlresolvers import reverse
 from django.contrib.auth.hashers import make_password, check_password
@@ -129,6 +130,9 @@ class Team(Templete):
         for answer in answers:
             points += answer.flag.point
 
+        for attack_point in AttackPoint.objects.filter(team=self):
+            points += attack_point.point
+
         return points
 
     @property
@@ -145,12 +149,22 @@ class Team(Templete):
         return data
 
 
+class UserManager(DjangoUserManager):
+    def by_ip(self, ip):
+        try:
+            user_connection = UserConnection.objects.filter(ip=ip).order_by("-updated_at")[0]
+        except IndexError:
+            return User.objects.none()
+        return self.get_queryset().filter(id=user_connection.user.id)
+
 
 class User(AbstractUser, Templete):
     """チームに属するユーザ"""
     team = models.ForeignKey(Team, verbose_name="チーム", blank=True, null=True)
     seat = models.CharField("座席", max_length=32, blank=True)
     last_score_time = models.DateTimeField("最終得点日時", blank=True, null=True)
+
+    objects = UserManager()
 
     def __str__(self):
         return self.username
@@ -161,6 +175,9 @@ class User(AbstractUser, Templete):
         points = 0
         for answer in answers:
             points += answer.flag.point
+
+        for attack_point in AttackPoint.objects.filter(user=self):
+            points += attack_point.point
 
         return points
 
