@@ -4,7 +4,7 @@ import json
 from django.core.signals import request_finished
 from django.dispatch import Signal, receiver
 from django.db.models.signals import post_save
-from lepus.models import Answer
+from lepus.models import Answer, Notice, Question
 
 def send_realtime_event(data):
     headers = {'Content-type': 'application/json', 'Accept': 'application/json'}
@@ -37,3 +37,22 @@ def on_answer_sent(sender, **kwargs):
             "is_admin":True
         }
         send_realtime_event(data)
+
+def on_changed(sender, **kwargs):
+    instance = kwargs["instance"]
+    if not instance.is_public:
+        return
+
+    data = {
+        "type": "update",
+        "id": instance.id
+    }
+    if isinstance(instance, Question):
+        data["model"] = "question"
+    if isinstance(instance, Notice):
+        data["model"] = "notice"
+
+    send_realtime_event(data)
+
+post_save.connect(on_changed, sender=Notice)
+post_save.connect(on_changed, sender=Question)

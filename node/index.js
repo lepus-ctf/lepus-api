@@ -12,6 +12,7 @@ app.get('/realtime/', function(req, res){
 
 app.post('/events/', function(req, res){
   if(req.body){
+    console.log(req.body);
     if(req.body.is_admin){
       io.to("admin").emit("event", req.body);
     }else{
