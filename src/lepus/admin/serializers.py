@@ -42,7 +42,7 @@ class AdminQuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
         fields = ('id', 'category', 'ordering', 'title', 'sentence', 'max_answers', 'max_failure', 'is_public', 'created_at', 'updated_at')
-        read_only_fields = ('id', 'created_at', 'updated_at')
+        read_only_fields = ('id', 'points', 'created_at', 'updated_at')
 
 class AdminFlagSerializer(serializers.ModelSerializer):
     class Meta:
