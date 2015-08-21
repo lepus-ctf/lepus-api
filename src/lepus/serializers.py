@@ -5,14 +5,54 @@ from datetime import datetime
 
 from lepus import models
 
-from rest_framework import serializers, status, exceptions
+from rest_framework import serializers, status, exceptions, fields
 
 
 class AuthenticationError(exceptions.APIException):
     status_code = status.HTTP_401_UNAUTHORIZED
 
 
-class CategorySerializer(serializers.ModelSerializer):
+class ValidationErrorDetail(object):
+    def __init__(self, error="", message=""):
+        self.error = error
+        self.message = message
+
+
+class ValidationError(serializers.ValidationError):
+
+    def __init__(self, error="", message=""):
+        detail = ValidationErrorDetail(message=message, error=error)
+        super(ValidationError, self).__init__(detail)
+
+
+class BaseSerializer(serializers.ModelSerializer):
+
+    def __init__(self, *args, **kwargs):
+        super(BaseSerializer, self).__init__(*args, **kwargs)
+        for k, field in self.fields.items():
+            if field.read_only:
+                continue
+            field.error_messages.update({
+                "required":"required",
+                "null":"required",
+                "blank":"required",
+                "max_length":"too_long",
+                "min_length":"too_short",
+                "min_value":"too_small",
+                "max_value":"too_big",
+                "invalid":"invalid",
+                "max_string_length":"too_long",
+                "does_not_exist":"not_found",
+                "incorrect_type":"numeric_is_required"
+            })
+
+            if isinstance(field, fields.IntegerField):
+                field.error_messages.update({
+                    "invalid":"numeric_is_required"
+                })
+
+
+class CategorySerializer(BaseSerializer):
     """カテゴリ"""
 
     class Meta:
@@ -21,13 +61,13 @@ class CategorySerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'created_at', 'updated_at')
 
 
-class FileSerializer(serializers.ModelSerializer):
+class FileSerializer(BaseSerializer):
     class Meta:
         model = models.File
         fields = ('url', 'name', 'created_at', 'updated_at')
 
 
-class QuestionSerializer(serializers.ModelSerializer):
+class QuestionSerializer(BaseSerializer):
     """問題"""
 
     class Meta:
@@ -41,7 +81,7 @@ class QuestionSerializer(serializers.ModelSerializer):
     files = FileSerializer(many=True, read_only=True)
 
 
-class TeamSerializer(serializers.ModelSerializer):
+class TeamSerializer(BaseSerializer):
     class Meta:
         model = models.Team
         fields = (
@@ -69,16 +109,15 @@ class TeamSerializer(serializers.ModelSerializer):
         return instance
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserSerializer(BaseSerializer):
     class Meta:
         model = models.User
         fields = ("id", "username", "password", "team", "points", "last_score_time", "team_name", "team_password", "is_staff")
         read_only_fields = ("id", "team", "points", "last_score_time", "is_staff")
         extra_kwargs = {'password': {'write_only': True}}
 
-    team_name = serializers.CharField(write_only=True, allow_null=False, error_messages={"require": "チーム名は必須です"})
-    team_password = serializers.CharField(write_only=True, allow_null=False,
-                                          error_messages={"require": "チームパスワードは必須です"})
+    team_name = serializers.CharField(write_only=True, allow_null=False)
+    team_password = serializers.CharField(write_only=True, allow_null=False)
 
     def validate_password(self, value):
         # FIXME:許可するパターンを指定
@@ -90,7 +129,7 @@ class UserSerializer(serializers.ModelSerializer):
             if not team.check_password(data.get("team_password")):
                 raise models.Team.DoesNotExist()
         except models.Team.DoesNotExist:
-            raise serializers.ValidationError("チームの認証情報が一致しません")
+            raise ValidationError(message="Invalid credentials. Team name or password is invalid.", error="INVALID_CREDENTIALS")
 
         data = {
             "team": team,
@@ -107,9 +146,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class AuthSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=30, allow_null=False,
-                                     error_messages={"require": "ユーザネームは必須です"})  # "ユーザネーム"
-    password = serializers.CharField(allow_null=False, error_messages={"require": "パスワードは必須です"})  # "パスワード"
+    username = serializers.CharField(max_length=30, allow_null=False)
+    password = serializers.CharField(allow_null=False)
 
     def validate(self, data):
         self._user_cache = None
@@ -119,14 +157,14 @@ class AuthSerializer(serializers.Serializer):
                 self._user_cache = user
 
         if not self._user_cache:
-            raise AuthenticationError('ユーザ名もしくはパスワードが間違っています')
+            raise AuthenticationError({"message":"Authentication failuer. Username or password is invalid.", "errors":["INVALID_CREDENTIALS"]})
         return data
 
     def get_user(self):
         return self._user_cache
 
 
-class AnswerSerializer(serializers.ModelSerializer):
+class AnswerSerializer(BaseSerializer):
     class Meta:
         model = models.Answer
         fields = ('question', 'answer', 'is_correct')
@@ -144,16 +182,16 @@ class AnswerSerializer(serializers.ModelSerializer):
 
         # 重複を許さない
         if flag and models.Answer.objects.filter(team=team, flag=flag).exists():
-            raise serializers.ValidationError("既に解答済みです")
+            raise ValidationError(message="The flag is already submitted.", error="ALREADY_SUBMITTED")
 
         # questionにおいて制限数が1以上の時，無制限に解答を受け付ける
         if question.max_failure and question.max_failure >= 0:
             if question.max_failure <= models.Answer.objects.filter(question=question, team=team).count():
-                raise serializers.ValidationError("解答制限数を超えました")
+                raise ValidationError(message="Failuer count is exceed. You can't submit for this question.", error="MAX_FAILUER")
 
         if question.max_answers and question.max_answers >= 0:
             if question.max_answers <= models.Answer.objects.filter(flag=flag, question=question).count():
-                raise serializers.ValidationError("最大正答者数を超えました")
+                raise ValidationError(message="Teams count is exceed. You can't submit for this question.", error="MAX_ANSWERS")
 
         return data
 
@@ -188,14 +226,14 @@ class AnswerSerializer(serializers.ModelSerializer):
         return answer
 
 
-class AttackPointSerializer(serializers.ModelSerializer):
+class AttackPointSerializer(BaseSerializer):
     class Meta:
         model = models.AttackPoint
         fields = ('id', 'user', 'team', 'question', 'taken', 'point')
         read_only_fields = ('id', 'user', 'team', 'created_at', 'updated_at')
 
 
-class NoticeSerializer(serializers.ModelSerializer):
+class NoticeSerializer(BaseSerializer):
     class Meta:
         model = models.Notice
         fields = ('id', 'title', 'body', 'created_at', 'updated_at')

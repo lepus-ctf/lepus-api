@@ -3,9 +3,9 @@
 from rest_framework import serializers
 
 from lepus.models import *
-from lepus.serializers import TeamSerializer, CategorySerializer
+from lepus.serializers import BaseSerializer, TeamSerializer, CategorySerializer
 
-class AdminUserSerializer(serializers.ModelSerializer):
+class AdminUserSerializer(BaseSerializer):
     class Meta:
         model = User
         fields = ("id", "username", "password", "team", "seat", "points", "ip", "last_score_time", "created_at", "updated_at")
@@ -37,26 +37,26 @@ class AdminTeamSerilaizer(TeamSerializer):
 class AdminCategorySerializer(CategorySerializer):
     pass
 
-class AdminQuestionSerializer(serializers.ModelSerializer):
+class AdminQuestionSerializer(BaseSerializer):
     """問題"""
     class Meta:
         model = Question
         fields = ('id', 'category', 'ordering', 'title', 'sentence', 'max_answers', 'max_failure', 'is_public', 'created_at', 'updated_at')
         read_only_fields = ('id', 'points', 'created_at', 'updated_at')
 
-class AdminFlagSerializer(serializers.ModelSerializer):
+class AdminFlagSerializer(BaseSerializer):
     class Meta:
         model = Flag
         fields = ("id", "question", "flag", "point", "teams", "created_at", "updated_at")
         read_only_fields = ("id", "teams", "created_at", "updated_at")
 
-class AdminAnswerSerializer(serializers.ModelSerializer):
+class AdminAnswerSerializer(BaseSerializer):
     class Meta:
         model = Answer
         fields = ("id", "user", "team", "question", "answer", "flag", "is_correct", "created_at", "updated_at")
         read_only_fields = ("is_correct",)
 
-class AdminNoticeSerializer(serializers.ModelSerializer):
+class AdminNoticeSerializer(BaseSerializer):
     class Meta:
         model = Notice
         fields = ('id', 'title', 'body', 'is_public', 'created_at', 'updated_at')
