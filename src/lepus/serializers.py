@@ -21,21 +21,24 @@ class CategorySerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'created_at', 'updated_at')
 
 
+class FileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.File
+        fields = ('url', 'name', 'created_at', 'updated_at')
+
+
 class QuestionSerializer(serializers.ModelSerializer):
     """問題"""
 
     class Meta:
         model = models.Question
         fields = (
-            'id', 'category', 'ordering', 'title', 'sentence', 'max_answers', 'max_failure', 'created_at', 'updated_at',
-            'points')
+            'id', 'category', 'ordering', 'title', 'sentence', 'max_answers', 'max_failure',
+            'created_at', 'updated_at', 'points'
+        )
         read_only_fields = ('points', )
 
-
-class FileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.File
-        fields = ('id', 'url', 'name', 'question', 'created_at', 'updated_at')
+    files = FileSerializer(many=True, read_only=True)
 
 
 class TeamSerializer(serializers.ModelSerializer):
