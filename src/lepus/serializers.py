@@ -23,10 +23,13 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class QuestionSerializer(serializers.ModelSerializer):
     """問題"""
+
     class Meta:
         model = models.Question
         fields = (
-            'id', 'category', 'ordering', 'title', 'sentence', 'max_answers', 'max_failure', 'created_at', 'updated_at')
+            'id', 'category', 'ordering', 'title', 'sentence', 'max_answers', 'max_failure', 'created_at', 'updated_at',
+            'points')
+        read_only_fields = ('points', )
 
 
 class FileSerializer(serializers.ModelSerializer):
@@ -38,7 +41,9 @@ class FileSerializer(serializers.ModelSerializer):
 class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Team
-        fields = ('id', 'name', 'display_name', 'password', 'token', 'points', 'last_score_time', 'created_at', 'updated_at', 'questions')
+        fields = (
+            'id', 'name', 'display_name', 'password', 'token', 'points', 'last_score_time', 'created_at', 'updated_at',
+            'questions')
         read_only_fields = ('id', 'token', 'points', 'last_score_time', 'questions', 'created_at', 'updated_at')
         extra_kwargs = {'password': {'write_only': True, 'required': False}}
 
@@ -60,6 +65,7 @@ class TeamSerializer(serializers.ModelSerializer):
             instance.save()
         return instance
 
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.User
@@ -67,8 +73,9 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "team", "points", "last_score_time", "is_staff")
         extra_kwargs = {'password': {'write_only': True}}
 
-    team_name = serializers.CharField(write_only=True, allow_null=False, error_messages={"require":"チーム名は必須です"})
-    team_password = serializers.CharField(write_only=True, allow_null=False, error_messages={"require":"チームパスワードは必須です"})
+    team_name = serializers.CharField(write_only=True, allow_null=False, error_messages={"require": "チーム名は必須です"})
+    team_password = serializers.CharField(write_only=True, allow_null=False,
+                                          error_messages={"require": "チームパスワードは必須です"})
 
     def validate_password(self, value):
         # FIXME:許可するパターンを指定
@@ -83,9 +90,9 @@ class UserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("チームの認証情報が一致しません")
 
         data = {
-            "team":team,
-            "username":data["username"],
-            "password":data["password"]
+            "team": team,
+            "username": data["username"],
+            "password": data["password"]
         }
         return data
 
@@ -97,8 +104,9 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class AuthSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=30, allow_null=False, error_messages={"require":"ユーザネームは必須です"}) # "ユーザネーム"
-    password = serializers.CharField(allow_null=False, error_messages={"require":"パスワードは必須です"}) #"パスワード"
+    username = serializers.CharField(max_length=30, allow_null=False,
+                                     error_messages={"require": "ユーザネームは必須です"})  # "ユーザネーム"
+    password = serializers.CharField(allow_null=False, error_messages={"require": "パスワードは必須です"})  # "パスワード"
 
     def validate(self, data):
         self._user_cache = None
@@ -166,11 +174,11 @@ class AnswerSerializer(serializers.ModelSerializer):
             user.save()
 
         data = {
-            "user":user,
-            "team":team,
-            "question":question,
-            "answer":answer,
-            "flag":flag
+            "user": user,
+            "team": team,
+            "question": question,
+            "answer": answer,
+            "flag": flag
         }
         answer = models.Answer(**data)
         answer.save()

@@ -52,6 +52,10 @@ class Question(Templete):
 
     objects = QuestionManager()
 
+    @property
+    def points(self):
+        return sum([o.point for o in self.flag_set.all()])
+
     def __str__(self):
         return self.title
 
