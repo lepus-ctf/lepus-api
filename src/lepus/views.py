@@ -13,6 +13,22 @@ from .models import *
 from django.http import HttpResponse
 import mimetypes
 
+
+class DynamicDepthMixins(object):
+
+    def get_serializer_class(self, *args, **kwargs):
+        serializer_class = super(DynamicDepthMixins, self).get_serializer_class()
+        serializer_class.Meta.depth = 0
+
+        if self.request.method == "GET":
+            include = self.request.GET.get("include", "").lower()
+            if include in ("1", "true"):
+                serializer_class.Meta.depth = 1
+
+        return serializer_class
+
+
+
 class AuthViewSet(viewsets.ViewSet):
     serializer_class = AuthSerializer
 
@@ -40,6 +56,7 @@ class AuthViewSet(viewsets.ViewSet):
 class UserViewSet(mixins.CreateModelMixin,
                   mixins.ListModelMixin,
                   mixins.RetrieveModelMixin,
+                  DynamicDepthMixins,
                   viewsets.GenericViewSet):
     serializer_class = UserSerializer
     queryset = User.objects.filter(id=-1)
@@ -50,13 +67,13 @@ class UserViewSet(mixins.CreateModelMixin,
 
 
 
-class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
+class CategoryViewSet(DynamicDepthMixins, viewsets.ReadOnlyModelViewSet):
     serializer_class = CategorySerializer
     queryset = serializer_class.Meta.model.objects.all() # FIXME:Questionが存在しないCategoryを隠す
     permission_classes = (permissions.IsAuthenticated,)
 
 
-class QuestionViewSet(viewsets.ReadOnlyModelViewSet):
+class QuestionViewSet(DynamicDepthMixins, viewsets.ReadOnlyModelViewSet):
     serializer_class = QuestionSerializer
     queryset = serializer_class.Meta.model.objects.public()
     permission_classes = (permissions.IsAuthenticated,)
@@ -76,7 +93,7 @@ def download_file(request, file_id, filename=""):
     return response
 
 
-class TeamViewSet(viewsets.ReadOnlyModelViewSet):
+class TeamViewSet(DynamicDepthMixins, viewsets.ReadOnlyModelViewSet):
     serializer_class = TeamSerializer
     queryset = serializer_class.Meta.model.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
@@ -84,13 +101,14 @@ class TeamViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class AnswerViewSet(mixins.CreateModelMixin,
+                    DynamicDepthMixins,
                     viewsets.GenericViewSet):
     serializer_class = AnswerSerializer
     queryset = Answer.objects.filter(id=-1)
     permission_classes = (permissions.IsAuthenticated,)
 
 
-class NoticeViewSet(viewsets.ReadOnlyModelViewSet):
+class NoticeViewSet(DynamicDepthMixins, viewsets.ReadOnlyModelViewSet):
     serializer_class = NoticeSerializer
     queryset = serializer_class.Meta.model.objects.filter(is_public=True)
     permission_classes = (permissions.AllowAny,)
