@@ -81,7 +81,8 @@ WSGI_APPLICATION = 'lepus.wsgi.application'
 
 # supporting filtering
 REST_FRAMEWORK = {
-    'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',)
+    'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',),
+    'EXCEPTION_HANDLER': 'lepus.handlers.exception_handler'
 }
 
 
