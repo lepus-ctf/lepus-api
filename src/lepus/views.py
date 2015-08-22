@@ -36,7 +36,7 @@ class AuthViewSet(viewsets.ViewSet):
         if request.user.is_authenticated():
             return Response(UserSerializer(request.user).data)
 
-        return Response({"error": "未ログインです"}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({"message": "Authentication is required.", "errors":[{"error":"unauthorized"}]}, status=status.HTTP_401_UNAUTHORIZED)
 
 
     def create(self, request, *args, **kwargs):

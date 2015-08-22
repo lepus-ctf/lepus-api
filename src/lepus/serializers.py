@@ -8,10 +8,6 @@ from lepus import models
 from rest_framework import serializers, status, exceptions, fields
 
 
-class AuthenticationError(exceptions.APIException):
-    status_code = status.HTTP_401_UNAUTHORIZED
-
-
 class ValidationErrorDetail(object):
     def __init__(self, error="", message=""):
         self.error = error
@@ -73,7 +69,7 @@ class QuestionSerializer(BaseSerializer):
     class Meta:
         model = models.Question
         fields = (
-            'id', 'category', 'ordering', 'title', 'sentence', 'max_answers', 'max_failure',
+            'id', 'category', 'ordering', 'title', 'sentence', 'max_answers', 'files', 'max_failure',
             'created_at', 'updated_at', 'points'
         )
         read_only_fields = ('points', )
@@ -146,8 +142,8 @@ class UserSerializer(BaseSerializer):
 
 
 class AuthSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=30, allow_null=False)
-    password = serializers.CharField(allow_null=False)
+    username = serializers.CharField(max_length=30, allow_null=False, error_messages={"required":"required"})
+    password = serializers.CharField(allow_null=False, error_messages={"required":"required"})
 
     def validate(self, data):
         self._user_cache = None
@@ -157,7 +153,7 @@ class AuthSerializer(serializers.Serializer):
                 self._user_cache = user
 
         if not self._user_cache:
-            raise AuthenticationError({"message":"Authentication failuer. Username or password is invalid.", "errors":["INVALID_CREDENTIALS"]})
+            raise ValidationError(message="Authentication failuer. Username or password is invalid.", error="INVALID_CREDENTIALS")
         return data
 
     def get_user(self):

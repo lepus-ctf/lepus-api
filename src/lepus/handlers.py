@@ -1,4 +1,6 @@
 # encoding=utf-8
+from django.http import Http404
+from django.core.exceptions import PermissionDenied
 from rest_framework import exceptions, status
 from rest_framework.compat import set_rollback
 from rest_framework.response import Response
