@@ -65,15 +65,6 @@ class QuestionViewSet(viewsets.ReadOnlyModelViewSet):
     filter_fields = ('category',)
 
 
-class FileViewSet(viewsets.ReadOnlyModelViewSet):
-    serializer_class = FileSerializer
-    queryset = serializer_class.Meta.model.objects.public()
-    permission_classes = (permissions.IsAuthenticated,)
-
-    filter_backends = (filters.DjangoFilterBackend,)
-    filter_fields = ('question',)
-
-
 def download_file(request, file_id, filename=""):
     f = get_object_or_404(File.objects.public(), id=file_id)
     if filename != f.name:

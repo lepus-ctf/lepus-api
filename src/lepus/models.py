@@ -59,6 +59,11 @@ class Question(Templete):
     def __str__(self):
         return self.title
 
+    @property
+    def files(self):
+        return self.file_set.filter(is_public=True)
+
+
 class Flag(Templete):
     """正解のフラグと得点"""
     flag = models.CharField("Flag", max_length=200, unique=True)
