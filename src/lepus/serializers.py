@@ -168,13 +168,17 @@ class AnswerSerializer(BaseSerializer):
 
     def validate(self, data):
         question = data['question']
-        team = self.context.get('request').user.team
+        user = self.context.get('request').user
+        team = user.team
 
         # 対応するFlagの取得
         try:
             flag = models.Flag.objects.get(question=question, flag=data['answer'])
         except models.Flag.DoesNotExist:
-            flag = None
+            # 間違いを記録
+            answer = models.Answer(question=question, team=team, user=user, answer=data['answer'], flag=None)
+            answer.save()
+            raise ValidationError(message="This answer is not correct.", error="INCORRECT_ANSWER")
 
         # 重複を許さない
         if flag and models.Answer.objects.filter(team=team, flag=flag).exists():
