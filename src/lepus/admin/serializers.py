@@ -16,7 +16,7 @@ class AdminUserSerializer(BaseSerializer):
         password = validated_data.pop("password", None)
         instance = super(AdminUserSerializer, self).create(validated_data)
         if password:
-            instance.set_password(validated_data["password"])
+            instance.set_password(password)
         else:
             instance.password = "!"
         instance.save()
