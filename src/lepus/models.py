@@ -162,18 +162,6 @@ class Team(Templete):
         return data.values()
 
 
-        for question in Question.objects.public():
-
-            answers = list(Answer.objects.filter(team=self, flag__question=question))
-            data.append({
-                "id":question.id,
-                "flags":len(answers),
-                "points":sum([a.flag.point for a in answers])
-            })
-
-        return data
-
-
 class UserManager(DjangoUserManager):
     def by_ip(self, ip):
         try:
