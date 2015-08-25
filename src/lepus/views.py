@@ -77,7 +77,7 @@ class CategoryViewSet(DynamicDepthMixins, viewsets.ReadOnlyModelViewSet):
 
 class QuestionViewSet(DynamicDepthMixins, viewsets.ReadOnlyModelViewSet):
     serializer_class = QuestionSerializer
-    queryset = serializer_class.Meta.model.objects.public()
+    queryset = serializer_class.Meta.model.objects.public().prefetch_related("flag_set", "file_set")
     permission_classes = (permissions.IsAuthenticated,)
 
     filter_backends = (filters.DjangoFilterBackend,)
@@ -97,7 +97,7 @@ def download_file(request, file_id, filename=""):
 
 class TeamViewSet(DynamicDepthMixins, viewsets.ReadOnlyModelViewSet):
     serializer_class = TeamSerializer
-    queryset = serializer_class.Meta.model.objects.all()
+    queryset = serializer_class.Meta.model.objects.prefetch_related("answer_set", "attackpoint_set", "answer_set__flag", "answer_set__flag__question")
     permission_classes = (permissions.IsAuthenticated,)
 
 
