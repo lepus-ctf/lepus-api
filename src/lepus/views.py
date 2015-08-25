@@ -60,10 +60,12 @@ class UserViewSet(mixins.CreateModelMixin,
                   viewsets.GenericViewSet):
     serializer_class = UserSerializer
     queryset = User.objects.filter(id=-1)
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = ()
 
     def get_queryset(self):
-        return User.objects.filter(team=self.request.user.team)
+        if self.request.user.is_authenticated():
+            return User.objects.filter(team=self.request.user.team)
+        return self.queryset
 
 
 

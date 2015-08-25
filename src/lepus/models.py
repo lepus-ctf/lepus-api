@@ -100,7 +100,6 @@ class File(Templete):
 class Team(Templete):
     """チーム"""
     name = models.CharField("チーム名", max_length=32, unique=True)
-    display_name = models.CharField("表示名", max_length=32, unique=True)
     password = models.CharField("チームパスワード", max_length=128)
     last_score_time = models.DateTimeField("最終得点日時", blank=True, null=True)
 
