@@ -61,7 +61,7 @@ class Question(Templete):
 
     @property
     def files(self):
-        return self.file_set.filter(is_public=True)
+        return filter(lambda f:f.is_public, self.file_set.all())
 
 
 class Flag(Templete):
@@ -133,28 +133,33 @@ class Team(Templete):
 
     @property
     def points(self):
-        answers = Answer.objects.filter(team=self).exclude(flag=None)
+        answers = filter(lambda a:a.flag_id, self.answer_set.all())
         points = 0
         for answer in answers:
             points += answer.flag.point
 
-        for attack_point in AttackPoint.objects.filter(team=self):
+        for attack_point in self.attackpoint_set.all():
             points += attack_point.point
 
         return points
 
     @property
     def questions(self):
-        data = []
-        for question in Question.objects.public():
-            answers = list(Answer.objects.filter(team=self, flag__question=question))
-            data.append({
-                "id":question.id,
-                "flags":len(answers),
-                "points":sum([a.flag.point for a in answers])
-            })
+        data = {}
+        answers = filter(lambda a:a.flag_id, self.answer_set.all())
 
-        return data
+        for answer in answers:
+            question = answer.flag.question
+            if not question.id in data:
+                data[question.id] = {
+                    "id": question.id,
+                    "flags":0,
+                    "points":0
+                }
+            data[question.id]["flags"] += 1
+            data[question.id]["points"] += answer.flag.point
+
+        return data.values()
 
 
 class UserManager(DjangoUserManager):
