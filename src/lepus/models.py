@@ -36,7 +36,6 @@ class QuestionManager(models.Manager):
     def public(self):
         return self.get_queryset().filter(is_public=True)
 
-
 class Question(Templete):
     """問題"""
     class Meta:
@@ -251,10 +250,17 @@ class Config(Templete):
         return self.key
 
     def get_value(self):
-        return pickle.loads(self.value_str)
+        return pickle.loads(self.value_str.encode('latin1'))
     def set_value(self, value):
-        self.value_str = pickle.dumps(value)
+        self.value_str = pickle.dumps(value).decode('latin1')
     value = property(get_value, set_value)
+
+    @classmethod
+    def get(cls, key, default=None):
+        try:
+            return cls.objects.get(key=key)
+        except Config.DoesNotExist:
+            return default
 
 class Notice(Templete):
     """お知らせ"""
