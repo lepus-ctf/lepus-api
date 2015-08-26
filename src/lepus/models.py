@@ -3,6 +3,7 @@ import pickle
 import hashlib
 import time
 import datetime
+import base64
 from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import UserManager as DjangoUserManager
@@ -250,9 +251,9 @@ class Config(Templete):
         return self.key
 
     def get_value(self):
-        return pickle.loads(self.value_str.encode('latin1'))
+        return pickle.loads(base64.b64decode(self.value_str))
     def set_value(self, value):
-        self.value_str = pickle.dumps(value).decode('latin1')
+        self.value_str = base64.b64encode(pickle.dumps(value))
     value = property(get_value, set_value)
 
     @classmethod
