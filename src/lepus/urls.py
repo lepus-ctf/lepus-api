@@ -20,7 +20,7 @@ from django.contrib import admin
 from rest_framework.routers import DefaultRouter
 
 from lepus.views import AuthViewSet, UserViewSet, QuestionViewSet, TeamViewSet, \
-    CategoryViewSet, NoticeViewSet, AnswerViewSet, download_file
+    CategoryViewSet, NoticeViewSet, AnswerViewSet, download_file, ConfigViewSet
 
 from lepus.admin.views import router as admin_router
 from lepus.internal.views import router as internal_router
@@ -33,6 +33,7 @@ router.register(r'answers', AnswerViewSet, base_name="answers")
 router.register(r'teams', TeamViewSet)
 router.register(r'categories', CategoryViewSet)
 router.register(r'notices', NoticeViewSet)
+router.register(r'configurations', ConfigViewSet)
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),

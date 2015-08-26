@@ -11,7 +11,7 @@ from django.http import HttpResponse
 
 from lepus.permissions import IsClosed, IsStarted
 from .serializers import AuthSerializer, TeamSerializer, UserSerializer, QuestionSerializer, CategorySerializer, \
-    AnswerSerializer, NoticeSerializer
+    AnswerSerializer, NoticeSerializer, ConfigSerializer
 from .models import *
 
 
@@ -112,5 +112,13 @@ class NoticeViewSet(DynamicDepthMixins, viewsets.ReadOnlyModelViewSet):
     serializer_class = NoticeSerializer
     queryset = serializer_class.Meta.model.objects.filter(is_public=True)
     permission_classes = (permissions.AllowAny,)
+
+
+class ConfigViewSet(DynamicDepthMixins, viewsets.ReadOnlyModelViewSet):
+    lookup_field = "key"
+    serializer_class = ConfigSerializer
+    queryset = serializer_class.Meta.model.objects.all()
+    permission_classes = (permissions.AllowAny,)
+
 
 # TODO:AttackPointのAPIを開発する

@@ -250,3 +250,12 @@ class NoticeSerializer(BaseSerializer):
     class Meta:
         model = models.Notice
         fields = ('id', 'title', 'body', 'created_at', 'updated_at')
+
+
+class ConfigSerializer(BaseSerializer):
+    class Meta:
+        model = models.Config
+        fields = ('id', 'value')
+        readonly_fields = ('id', 'value')
+
+    id = serializers.CharField(source='key')
