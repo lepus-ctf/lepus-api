@@ -4,6 +4,7 @@ from rest_framework import serializers
 
 from lepus.models import *
 from lepus.serializers import BaseSerializer, TeamSerializer, CategorySerializer
+from lepus.signals import send_realtime_event
 
 class AdminUserSerializer(BaseSerializer):
     class Meta:
@@ -61,3 +62,21 @@ class AdminNoticeSerializer(BaseSerializer):
         model = Notice
         fields = ('id', 'title', 'body', 'is_public', 'created_at', 'updated_at')
         read_only_fields = ('id', 'created_at', 'updated_at')
+
+class AdminYoutubeSerializer(serializers.Serializer):
+    video_id = serializers.RegexField(regex="^[a-zA-Z0-9_-]{11}$", max_length=20, required=False, error_messages={"invalid":"INVALID"})
+
+    def create(self, validated_data):
+        video_id = validated_data.get("video_id", None)
+        if not video_id:
+            video_id = None
+
+        data = {
+            "type":"youtube",
+            "video_id": video_id
+        }
+        send_realtime_event(data)
+
+        return {
+            "video_id": video_id
+        }

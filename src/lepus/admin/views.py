@@ -1,7 +1,9 @@
 # encoding=utf-8
 from rest_framework.routers import DefaultRouter
 from rest_framework import permissions, viewsets, mixins
-from lepus.admin.serializers import AdminUserSerializer, AdminTeamSerilaizer, AdminCategorySerializer, AdminQuestionSerializer, AdminFlagSerializer, AdminAnswerSerializer, AdminNoticeSerializer
+from lepus.admin.serializers import AdminUserSerializer, AdminTeamSerilaizer, AdminCategorySerializer, \
+    AdminQuestionSerializer, AdminFlagSerializer, AdminAnswerSerializer, AdminNoticeSerializer, \
+    AdminYoutubeSerializer
 from lepus.models import *
 from lepus.views import DynamicDepthMixins
 
@@ -65,3 +67,14 @@ class AdminNoticeViewSet(DynamicDepthMixins, viewsets.ModelViewSet):
     permission_classes = (permissions.IsAdminUser,)
 
 router.register("notices", AdminNoticeViewSet)
+
+
+class AdminYouTubeViewSet(mixins.CreateModelMixin, viewsets.ViewSet):
+    serializer_class = AdminYoutubeSerializer
+
+    def get_serializer(self, data=None):
+        if data:
+            return self.serializer_class(data=data)
+        return self.serializer_class()
+
+router.register("youtube", AdminYouTubeViewSet, base_name="youtube")

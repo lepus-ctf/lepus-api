@@ -9,7 +9,6 @@ from lepus.models import Answer, Notice, Category, Question, File
 def send_realtime_event(data):
     headers = {'Content-type': 'application/json', 'Accept': 'application/json'}
     response = requests.post("http://localhost:8001/events/", data=json.dumps(data), headers=headers)
-    print(data)
 
 @receiver(post_save, sender=Answer)
 def on_answer_sent(sender, **kwargs):
@@ -40,7 +39,7 @@ def on_answer_sent(sender, **kwargs):
 
 def on_changed(sender, **kwargs):
     instance = kwargs["instance"]
-    
+
     if hasattr(instance, "is_public") and not instance.is_public:
         return
 
