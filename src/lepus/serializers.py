@@ -166,7 +166,7 @@ class AuthSerializer(serializers.Serializer):
                 self._user_cache = user
 
         if not self._user_cache:
-            raise ValidationError(message="Authentication failuer. Username or password is invalid.", error="INVALID_CREDENTIALS")
+            raise ValidationError(message="Authentication failure. Username or password is invalid.", error="INVALID_CREDENTIALS")
         return data
 
     def get_user(self):
@@ -200,7 +200,7 @@ class AnswerSerializer(BaseSerializer):
         # questionにおいて制限数が1以上の時，無制限に解答を受け付ける
         if question.max_failure and question.max_failure >= 0:
             if question.max_failure <= models.Answer.objects.filter(question=question, team=team).count():
-                raise ValidationError(message="Failuer count is exceed. You can't submit for this question.", error="MAX_FAILUER")
+                raise ValidationError(message="Failure count is exceed. You can't submit for this question.", error="MAX_FAILURE")
 
         if question.max_answers and question.max_answers >= 0:
             if question.max_answers <= models.Answer.objects.filter(flag=flag, question=question).count():

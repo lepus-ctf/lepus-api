@@ -38,9 +38,9 @@ def exception_handler(exc, context):
     if isinstance(exc, exceptions.APIException):
         if isinstance(exc.detail, list):
             errors = [{"error": e} for e in exc.detail]
-            data = {"message": "API exception occured.", "errors": errors}
+            data = {"message": "API exception occurred.", "errors": errors}
         elif isinstance(exc.detail, dict):
-            message = exc.detail.get("message", "API exception occured.")
+            message = exc.detail.get("message", "API exception occurred.")
             errors = [{"error": e} for e in exc.detail.get("errors", [])]
             data = {'message': message, "errors": errors}
         else:

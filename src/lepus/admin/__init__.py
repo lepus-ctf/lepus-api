@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib import admin
 from lepus.models import Category, Question, Team, User, Flag, Answer, Notice, File, \
-    UserConnection
+    UserConnection, Config
 
 class NoticeAdmin(admin.ModelAdmin):
     list_display = ("id", "title", "body", "is_public")
@@ -61,3 +61,9 @@ class AnswerAdmin(admin.ModelAdmin):
     list_filter = ("team", "user", "question",)
 
 admin.site.register(Answer, AnswerAdmin)
+
+
+class ConfigAdmin(admin.ModelAdmin):
+    list_display = ("id", "key", "value",)
+
+admin.site.register(Config, ConfigAdmin)
