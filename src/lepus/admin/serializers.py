@@ -65,18 +65,22 @@ class AdminNoticeSerializer(BaseSerializer):
 
 class AdminYoutubeSerializer(serializers.Serializer):
     video_id = serializers.RegexField(regex="^[a-zA-Z0-9_-]{11}$", max_length=20, required=False, error_messages={"invalid":"INVALID"})
+    forced = serializers.BooleanField()
 
     def create(self, validated_data):
         video_id = validated_data.get("video_id", None)
+        forced = validated_data.get("forced", False)
         if not video_id:
             video_id = None
 
         data = {
             "type":"youtube",
-            "video_id": video_id
+            "video_id": video_id,
+            "forced": forced
         }
         send_realtime_event(data)
 
         return {
-            "video_id": video_id
+            "video_id": video_id,
+            "forced": forced
         }
