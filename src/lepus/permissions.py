@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 
 from rest_framework.exceptions import APIException
 from rest_framework.permissions import BasePermission
@@ -16,11 +16,11 @@ class TimeException(APIException):
 
 class IsClosed(BasePermission):
     def has_permission(self, request, view):
-        end = Config.get(key='end_date')
-        now = datetime.now()
+        end = Config.get(key='end_at')
+        now = datetime.datetime.now()
 
         if end:
-            if end.value < now:
+            if end < now:
                 raise TimeException(message="CTF closed.", error="CLOSED")
 
         return True
@@ -28,11 +28,11 @@ class IsClosed(BasePermission):
 
 class IsStarted(BasePermission):
     def has_permission(self, request, view):
-        start = Config.get(key='start_date')
-        now = datetime.now()
+        start = Config.get(key='start_at')
+        now = datetime.datetime.now()
 
         if start:
-            if start.value > now:
+            if start > now:
                 raise TimeException(message="CTF isn't started.", error="NOT_STARTED")
 
         return True

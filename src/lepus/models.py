@@ -258,9 +258,17 @@ class Config(Templete):
     @classmethod
     def get(cls, key, default=None):
         try:
-            return cls.objects.get(key=key)
+            config = cls.objects.get(key=key)
+            return config.value
         except Config.DoesNotExist:
             return default
+
+    @classmethod
+    def set(cls, key, value):
+        config, created = Config.objects.get_or_create(key=key)
+        config.value = value
+        config.save()
+        return config
 
 class Notice(Templete):
     """お知らせ"""
