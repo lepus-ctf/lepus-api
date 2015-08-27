@@ -155,8 +155,8 @@ class UserSerializer(BaseSerializer):
 
 
 class AuthSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=30, allow_null=False, error_messages={"required":"required"})
-    password = serializers.CharField(allow_null=False, error_messages={"required":"required"})
+    username = serializers.CharField(max_length=30, allow_null=False, error_messages={"required":"required", "blank":"required"})
+    password = serializers.CharField(allow_null=False, error_messages={"required":"required", "blank":"required"})
 
     def validate(self, data):
         self._user_cache = None
