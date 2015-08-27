@@ -61,7 +61,7 @@ class CategorySerializer(BaseSerializer):
 class FileSerializer(BaseSerializer):
     class Meta:
         model = models.File
-        fields = ('url', 'name', 'created_at', 'updated_at')
+        fields = ('url', 'name', 'size', 'created_at', 'updated_at')
 
 
 class QuestionSerializer(BaseSerializer):
