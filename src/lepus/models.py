@@ -94,6 +94,10 @@ class File(Templete):
     def url(self):
         return reverse("download_file", args=(self.id, self.name))
 
+    @property
+    def size(self):
+        return self.file.size
+
     def __str__(self):
         return self.name
 
