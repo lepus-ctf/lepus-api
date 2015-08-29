@@ -227,6 +227,16 @@ class AnswerSerializer(BaseSerializer):
             team.save()
             user.save()
 
+        if not models.Answer.objects.filter(flag=flag).exists():
+            # ファーストボーナス
+            bonus_point = int(settings.FIRST_BONUS_RATE * flag.point)
+            if bonus_point > 0:
+                models.AttackPoint(
+                    user=user, team=team, question=question,
+                    token="first_bonus_{0}".format(flag.id),
+                    point=bonus_point
+                ).save()
+
         data = {
             "user": user,
             "team": team,
@@ -242,7 +252,7 @@ class AnswerSerializer(BaseSerializer):
 class AttackPointSerializer(BaseSerializer):
     class Meta:
         model = models.AttackPoint
-        fields = ('id', 'user', 'team', 'question', 'taken', 'point')
+        fields = ('id', 'user', 'team', 'question', 'token', 'point')
         read_only_fields = ('id', 'user', 'team', 'created_at', 'updated_at')
 
 
