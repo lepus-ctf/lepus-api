@@ -221,7 +221,7 @@ class UserConnection(Templete):
         """アクセス元IPの更新"""
         user_connection, created = cls.objects.get_or_create(user=user, ip=ip)
         if not created:
-            user_connection.updated_at = datdatetime.datetime.utcnow().replace(tzinfo=utc)
+            user_connection.updated_at = datetime.datetime.utcnow().replace(tzinfo=utc)
             user_connection.save()
         return user_connection
 
