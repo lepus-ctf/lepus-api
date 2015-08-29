@@ -1,4 +1,5 @@
 import datetime
+from django.utils.timezone import utc
 
 from rest_framework.exceptions import APIException
 from rest_framework.permissions import BasePermission
@@ -17,7 +18,7 @@ class TimeException(APIException):
 class IsClosed(BasePermission):
     def has_permission(self, request, view):
         end = Config.get(key='end_at')
-        now = datetime.datetime.now()
+        now = datetime.datetime.utcnow().replace(tzinfo=utc)
 
         if end:
             if end < now:
@@ -29,7 +30,7 @@ class IsClosed(BasePermission):
 class IsStarted(BasePermission):
     def has_permission(self, request, view):
         start = Config.get(key='start_at')
-        now = datetime.datetime.now()
+        now = datetime.datetime.utcnow().replace(tzinfo=utc)
 
         if start:
             if start > now:

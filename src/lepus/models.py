@@ -3,6 +3,7 @@ import pickle
 import hashlib
 import time
 import datetime
+from django.utils.timezone import utc
 import base64
 from django.conf import settings
 from django.db import models
@@ -220,7 +221,7 @@ class UserConnection(Templete):
         """アクセス元IPの更新"""
         user_connection, created = cls.objects.get_or_create(user=user, ip=ip)
         if not created:
-            user_connection.updated_at = datetime.datetime.now()
+            user_connection.updated_at = datdatetime.datetime.utcnow().replace(tzinfo=utc)
             user_connection.save()
         return user_connection
 
