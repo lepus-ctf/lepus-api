@@ -1,0 +1,18 @@
+<html>
+  <head>
+    <title>Realtime Example</title>
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io();
+      socket.on("event", function(data){
+        $("#messages").prepend($("<li>").text(JSON.stringify(data, null, " ")));
+      });
+    </script>
+  </head>
+  <body>
+    <h1>Realtime Example</h1>
+    <ul id="messages">
+    </ul>
+  </body>
+</html>

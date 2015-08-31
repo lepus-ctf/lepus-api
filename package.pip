@@ -1,0 +1,7 @@
+django<1.9
+Markdown
+django-filter
+djangorestframework
+drf-nested-routers
+django-debug-toolbar
+requests
