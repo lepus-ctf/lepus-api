@@ -2,6 +2,11 @@
 
 LepusはRESTfulなCTFスコアサーバーです。
 
+## Requirement
+
+* Python 3.4
+* see `package.pip`
+
 ## Quick Start
 
 * `git clone https://github.com/lepus-ctf/lepus-api.git`
