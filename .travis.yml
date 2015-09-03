@@ -1,0 +1,10 @@
+language: python
+
+python:
+  - "3.4"
+
+install: "pip install -r package.pip"
+
+script:
+  - cd src/
+  - python manage.py test
