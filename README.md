@@ -25,6 +25,6 @@ LepusはRESTfulなCTFスコアサーバーです。
 WebSocketによるリアルタイムのプッシュ通知は [lepus-api-push](https://github.com/lepus-ctf/lepus-api-push) と組み合わせて提供されています。
 
 ## Copyright and license
-Code and documentation copyright Lepus CTF.
+Code and documentation copyright [Lepus CTF](http://lepus-ctf.org/).
 Code released under [the MIT license](https://github.com/twbs/bootstrap/blob/master/LICENSE).
 Docs released under [Creative Commons](https://github.com/twbs/bootstrap/blob/master/docs/LICENSE).
