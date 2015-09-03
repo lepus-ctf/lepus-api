@@ -2,6 +2,8 @@
 
 LepusはRESTfulなCTFスコアサーバーです。
 
+[![Build Status](https://travis-ci.org/lepus-ctf/lepus-api.svg?branch=feat%2Freadme)](https://travis-ci.org/lepus-ctf/lepus-api)
+
 ## Requirement
 
 * Python 3.4
