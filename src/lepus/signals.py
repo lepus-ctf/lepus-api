@@ -4,11 +4,13 @@ import json
 from django.core.signals import request_finished
 from django.dispatch import Signal, receiver
 from django.db.models.signals import post_save
+from django.conf import settings
 from lepus.models import Answer, Notice, Category, Question, File
 
 def send_realtime_event(data):
-    headers = {'Content-type': 'application/json', 'Accept': 'application/json'}
-    response = requests.post("http://localhost:8001/events/", data=json.dumps(data), headers=headers)
+    if settings.PUSH_EVENT_URL:
+        headers = {'Content-type': 'application/json', 'Accept': 'application/json'}
+        response = requests.post(settings.PUSH_EVENT_URL, data=json.dumps(data), headers=headers)
 
 @receiver(post_save, sender=Answer)
 def on_answer_sent(sender, **kwargs):
