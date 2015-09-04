@@ -27,4 +27,4 @@ WebSocketによるリアルタイムのプッシュ通知は [lepus-api-push](ht
 ## Copyright and license
 Code and documentation copyright [Lepus CTF](http://lepus-ctf.org/).
 Code released under MIT License (See LICENSE)
-Docs released under [Creative Commons](https://github.com/twbs/bootstrap/blob/master/docs/LICENSE).
+Docs released under [Creative Commons License 4.0 BY](http://creativecommons.org/licenses/by/4.0/legalcode.ja).
