@@ -34,9 +34,9 @@ AUTH_USER_MODEL = 'lepus.User'
 # Application definition
 
 INSTALLED_APPS = (
+    'lepus',
     'rest_framework',
     'rest_framework.authtoken',
-    'lepus',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
