@@ -24,10 +24,9 @@ class Templete(models.Model):
 class Category(Templete):
     """問題のカテゴリ"""
     class Meta:
-        ordering = ('ordering', )
-        unique_together = (('name', 'ordering'),)
+        ordering = ('ordering', 'id',)
 
-    name = models.CharField("カテゴリ名", max_length=50)
+    name = models.CharField("カテゴリ名", max_length=50, unique=True)
     ordering = models.IntegerField("表示順序", default=100)
 
     def __str__(self):
@@ -41,10 +40,10 @@ class QuestionManager(models.Manager):
 class Question(Templete):
     """問題"""
     class Meta:
-        ordering = ('ordering', )
+        ordering = ('category', 'ordering', 'id',)
 
     category = models.ForeignKey(Category, verbose_name="カテゴリ")
-    ordering = models.IntegerField("表示順序", default=100, unique=True)
+    ordering = models.IntegerField("表示順序", default=100)
     title = models.CharField("タイトル", max_length=50)
     sentence = models.TextField("問題文")
     max_answers = models.IntegerField("最大回答者数", blank=True, null=True)
