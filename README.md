@@ -15,8 +15,8 @@ LepusはRESTfulなCTFスコアサーバーです。
 * `cd lepus-api`
 * `pip install -r package.pip`
 * `cd src`
-* `python migrate` to create database.
-* `python createsuperuser` to create superuser.
+* `python manage.py migrate` to create database.
+* `python manage.py createsuperuser` to create superuser.
 * `python manage.py runserver` to running webserver.
 * Open `http://localhost:8000/api/` for testing.
 
